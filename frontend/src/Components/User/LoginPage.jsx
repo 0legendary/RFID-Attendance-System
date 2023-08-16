@@ -1,15 +1,17 @@
 import React,{ useState } from 'react'
+import {useNavigate } from 'react-router-dom';
 
 
 
 function LoginPage() {
-
+  const navigate=useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState("");
 
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault()
     try {
       const response = await fetch('http://localhost:4000/login', {
         method: 'POST',
@@ -19,8 +21,28 @@ function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
+
+
+      // if (response.ok) {
+      //   const data = await response.json();
+        
+      //   if (data.user) {
+      //     // Navigate to "/home" when user data exists
+      //     navigate.push('/home');
+      //   } else {
+      //     // Handle the case where the user data doesn't exist
+      //     alert('User not found');
+      //   }
+      // } else {
+      //   alert('Login failed');
+      // }
+
       if (response.ok) {
         const data = await response.json();
+        if(data){
+          navigate.push('/home');
+        }
+
         alert(data.message); // Display success message as a browser alert
       } else if (response.status === 404) {
         alert('User not found'); // Display error message as a browser alert
@@ -29,7 +51,6 @@ function LoginPage() {
       } else {
         alert('Login failed'); // Display general error message as a browser alert
       }
-
 
     } catch (error) {
       console.error('An error occurred while logging in:', error);
@@ -41,7 +62,7 @@ function LoginPage() {
       <div className="user-login">
       <div className="login-container">
         <h2>Login</h2>
-        <form>
+        <form onSubmit={handleLogin}>
           
           <div className="input-group">
             <label htmlFor="email">Email</label>
@@ -62,7 +83,7 @@ function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
           </div>
-          <button className="login-button" onClick={handleLogin}>
+          <button className="login-button" >
             Log In
           </button>
         </form>

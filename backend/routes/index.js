@@ -119,37 +119,63 @@ app.post('/register-user', async (req, res) => {
 /* LOGIN USER */
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  
 
   try {
+    // Connect to the database using your custom connection setup
     dbConnection.connect(async (err) => {
       if (err) {
         console.error('Error connecting to the database:', err);
         return res.status(500).send('Database connection error');
       }
 
+      // Get the database instance
       const db = dbConnection.get();
-      const user = await db.collection('users').findOne({ email });
 
+      // Access the "register-card" collection and find the user data based on UID
+      const user = await db.collection('users').findOne({ email });
+      
+      
       if (!user) {
+        console.log("Email not found in dbs");
         return res.status(404).send('User not found');
       }
-
+  
       const isPasswordValid = await bcrypt.compare(password, user.password);
-
+  
       if (!isPasswordValid) {
+        console.log("Invalid password");
         return res.status(401).send('Invalid password');
       }
 
-      // User is authenticated, you can generate and send a token if desired
-      res.status(200).json({ message: 'Login successful' });
+      // Return the user data
+      res.status(200).json(user);
+      
     });
   } catch (error) {
-    console.error('An error occurred while logging in:', error);
-    res.status(500).send('Error during login');
+    console.error('An error occurred while fetching user data:', error);
+    // Handle error or show error message to user
+    res.status(500).send('Error fetching user data');
   }
 });
 
 
-
 module.exports = app;
 
+
+// dbConnection.connect(); // Await the database connection
+
+//     const db = dbConnection.get();
+//     const user = db.collection('users').findOne({ email });
+
+//     if (!user) {
+//       console.log("Email not found in dbs");
+//       return res.status(404).send('User not found');
+//     }
+
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+
+//     if (!isPasswordValid) {
+//       console.log("Invalid password");
+//       return res.status(401).send('Invalid password');
+//     }
