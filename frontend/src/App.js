@@ -15,6 +15,7 @@ import Admin from "./Components/Admin/Admin";
 import AdminHeader from "./Components/Admin/AdminHeader";
 import UserRegistration from "./Components/Admin/UserRegistration";
 import GenerateUID from "./Components/User/GenerateUID";
+import CardforNewUser from "./Components/Admin/CardCreation/CardforNewUser";
 
 
 
@@ -80,6 +81,13 @@ const GenerateUIDpath = ()=>{
     </div>
   )
 }
+const CreateNewUserByCard = ()=>{
+  return (
+    <div>
+    <CardforNewUser/>
+    </div>
+  )
+}
 
 
 function App() {
@@ -107,6 +115,9 @@ function App() {
 
         <Route path="/admin/generateuid" element={<AdminLayout/>}>
           <Route index element={<GenerateUIDpath/>}></Route>
+        </Route>
+        <Route path="/admin/new-user" element={<AdminLayout/>}>
+          <Route index element={<CreateNewUserByCard/>}></Route>
         </Route>
 
       </Route>

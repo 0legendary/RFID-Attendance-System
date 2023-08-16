@@ -4,10 +4,34 @@ function UIDCreationForm(props) {
     const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform any further actions, such as sending the data to the backend
-    // ...
+
+    try {
+      const response = await fetch('http://localhost:4000/register-card', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: props.uid,
+          name,
+          email,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('User created successfully');
+        // Perform any further actions or show success message to user
+      } else {
+        console.error('Failed to create user');
+        // Handle error or show error message to user
+      }
+    } catch (error) {
+      console.error('An error occurred while creating user:', error);
+      // Handle error or show error message to user
+    }
   };
   return ( 
     <div>
