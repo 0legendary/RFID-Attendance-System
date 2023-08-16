@@ -51,8 +51,8 @@ const Registration = ()=>{
 const HomePageUser = ()=>{
   return (
     <div> 
+      <LoginPage/>
       
-      <HomePage/>
     </div>
   )
 }
@@ -60,7 +60,7 @@ const HomePageUser = ()=>{
 const UserLoginPage = ()=>{
   return (
     <div>
-    <LoginPage/>
+    <HomePage/>
     </div>
   )
 }

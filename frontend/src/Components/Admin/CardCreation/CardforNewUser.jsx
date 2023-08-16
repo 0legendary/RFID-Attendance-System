@@ -11,7 +11,7 @@ function CardforNewUser() {
 
   useEffect(() => {
     // Fetch initial user data from the backend when the component mounts
-    fetch("http://localhost:4000/example")
+    fetch(`http://localhost:4000/get-user-data?uid=${userData.uid}`)
       .then((response) => response.json())
       .then((data) => {
         setName(data.name);
@@ -20,7 +20,7 @@ function CardforNewUser() {
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
-  }, []);
+  }, [userData.uid]);
 
   const handlePasswordToggle = () => {
     setShowPassword(!showPassword);
@@ -31,12 +31,14 @@ function CardforNewUser() {
 
     // Convert password to bcrypt format and send form data to backend
     try {
-      const response = await fetch("http://localhost:4000/example", {
+      const response = await fetch("http://localhost:4000/register-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          uid: userData.uid,
+          identifier: userData.identifier,
           name,
           email,
           password,
@@ -61,14 +63,17 @@ function CardforNewUser() {
       <div className="uid-creation-form">
         <h2>Create User</h2>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="uid">UID:</label>
+          <label htmlFor="uid">UID3:</label>
           <input type="text" id="uid" value={userData.uid} readOnly />
+
+          <label htmlFor="identifier">Card Identifier:</label>
+          <input type="text" id="identifier" value={userData.identifier} readOnly />
 
           <label htmlFor="name">Name:</label>
           <input
             type="text"
             id="name"
-            value={userData.name}
+            value={name}
             onChange={(e) => setName(e.target.value)}
           />
 
@@ -76,7 +81,7 @@ function CardforNewUser() {
           <input
             type="email"
             id="email"
-            value={userData.email}
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
@@ -84,7 +89,7 @@ function CardforNewUser() {
           <input
             type={showPassword ? 'text' : 'password'}
             id="password"
-            value={userData.password}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <button type="button" onClick={handlePasswordToggle}>
@@ -99,4 +104,3 @@ function CardforNewUser() {
 }
 
 export default CardforNewUser;
-

@@ -20,12 +20,11 @@ app.post('/submit-code', (req, res) => {
 
 app.post('/register-card', async (req, res) => {
   
-  const { uid, name, email, password } = req.body;
+  const { uid, identifier} = req.body;
   console.log(req.body);
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Connect to the database using your custom connection setup
+    
     dbConnection.connect((err) => {
       if (err) {
         console.error('Error connecting to the database:', err);
@@ -36,7 +35,7 @@ app.post('/register-card', async (req, res) => {
       const db = dbConnection.get();
 
       // Access the "register-card" collection and insert the user data
-      db.collection('register-card').insertOne({ uid, name, email,password: hashedPassword}, (err) => {
+      db.collection('register-card').insertOne({ uid, identifier}, (err) => {
         if (err) {
           console.error('Error inserting user data:', err);
           return res.status(500).send('Error inserting user data');
@@ -79,6 +78,77 @@ app.get('/get-user-data', async (req, res) => {
     res.status(500).send('Error fetching user data');
   }
 });
+
+app.post('/register-user', async (req, res) => {
+  const { uid, identifier, name, email, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    dbConnection.connect((err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).send('Database connection error');
+      }
+
+      const db = dbConnection.get();
+
+      // Access the "users" collection and insert the user data
+      db.collection('users').insertOne({
+        uid,
+        identifier,
+        name,
+        email,
+        password: hashedPassword,
+      }, (err) => {
+        if (err) {
+          console.error('Error inserting user data:', err);
+          return res.status(500).send('Error inserting user data');
+        }
+
+        res.status(201).send('User created and data stored successfully');
+      });
+    });
+  } catch (error) {
+    console.error('An error occurred while creating user and storing data:', error);
+    res.status(500).send('Error creating user and storing data');
+  }
+});
+
+
+/* LOGIN USER */
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    dbConnection.connect(async (err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).send('Database connection error');
+      }
+
+      const db = dbConnection.get();
+      const user = await db.collection('users').findOne({ email });
+
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        return res.status(401).send('Invalid password');
+      }
+
+      // User is authenticated, you can generate and send a token if desired
+      res.status(200).json({ message: 'Login successful' });
+    });
+  } catch (error) {
+    console.error('An error occurred while logging in:', error);
+    res.status(500).send('Error during login');
+  }
+});
+
 
 
 module.exports = app;

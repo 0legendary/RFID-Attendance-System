@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function UIDCreationForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [uidFromQuery, setUidFromQuery] = useState('');
 
   const location = useLocation();
@@ -26,9 +24,7 @@ function UIDCreationForm() {
         },
         body: JSON.stringify({
           uid: uidFromQuery,
-          name,
-          email,
-          password,
+          identifier,
         }),
       });
 
@@ -48,36 +44,18 @@ function UIDCreationForm() {
   return (
     <div>
       <div className="uid-creation-form">
-        <h2>Create UID</h2>
+        <h2>Create UID1</h2>
         <form onSubmit={handleSubmit}>
           <label htmlFor="uid">UID: </label>
           <input type="text" id="uid" value={uidFromQuery || ''} readOnly />
 
           {/* Rest of the form */}
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="identifier">Identifier</label>
           <input
             type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            id="identifier"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
           />
 
