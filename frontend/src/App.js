@@ -13,8 +13,8 @@ import {
 } from "react-router-dom"
 import Admin from "./Components/Admin/Admin";
 import AdminHeader from "./Components/Admin/AdminHeader";
-import UserRegistration from "./Components/Admin/CardCreation/UserRegistration";
-import GenerateUID from "./Components/User/GenerateUID";
+import UserRegistration from "./Components/Admin/UserRegistration";
+import GenerateUID from "./Components/Admin/CardCreation/GenerateUID";
 import CardforNewUser from "./Components/Admin/CardCreation/CardforNewUser";
 import UIDCreationForm from "./Components/Admin/CardCreation/UIDCreationForm";
 
