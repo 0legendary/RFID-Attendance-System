@@ -24,6 +24,7 @@ function UserRegistration() {
         console.error('Error fetching RFID UID:', error);
       }
     };
+  
 
     // Fetch RFID UID when the component mounts
     fetchRFIDUID();

@@ -13,9 +13,10 @@ import {
 } from "react-router-dom"
 import Admin from "./Components/Admin/Admin";
 import AdminHeader from "./Components/Admin/AdminHeader";
-import UserRegistration from "./Components/Admin/UserRegistration";
+import UserRegistration from "./Components/Admin/CardCreation/UserRegistration";
 import GenerateUID from "./Components/User/GenerateUID";
 import CardforNewUser from "./Components/Admin/CardCreation/CardforNewUser";
+import UIDCreationForm from "./Components/Admin/CardCreation/UIDCreationForm";
 
 
 
@@ -81,6 +82,13 @@ const GenerateUIDpath = ()=>{
     </div>
   )
 }
+const CreateNewCardByUID = ()=>{
+  return (
+    <div>
+      <UIDCreationForm/>
+    </div>
+  )
+}
 const CreateNewUserByCard = ()=>{
   return (
     <div>
@@ -115,6 +123,9 @@ function App() {
 
         <Route path="/admin/generateuid" element={<AdminLayout/>}>
           <Route index element={<GenerateUIDpath/>}></Route>
+        </Route>
+        <Route path="/admin/new-card" element={<AdminLayout/>}>
+          <Route index element={<CreateNewCardByUID/>}></Route>
         </Route>
         <Route path="/admin/new-user" element={<AdminLayout/>}>
           <Route index element={<CreateNewUserByCard/>}></Route>

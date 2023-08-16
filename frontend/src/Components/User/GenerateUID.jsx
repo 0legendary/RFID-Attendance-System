@@ -1,60 +1,47 @@
-import React, { useState } from "react";
-import UIDCreationForm from "../Admin/CardCreation/UIDCreationForm";
-import { Link,useNavigate} from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function GenerateUID() {
-  const [uid, setUid] = useState("");
-  const [uidNotFound, setUIDNotFound] = useState(false); // State to track if UID not found
+  const [uid, setUid] = useState('');
   const navigate = useNavigate();
 
   const generateCodeAndSendToBackend = async () => {
-    const newUid = Math.floor(Math.random() * 90000) + 10000; // Generate a 5-digit number
+    const newUid = Math.floor(Math.random() * 90000) + 10000;
     setUid(newUid);
 
-      // Send the code to the backend API
-      try {
-        const response = await fetch("http://localhost:4000/submit-code", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ uid: newUid }),
-        });
+    try {
+      const response = await fetch('http://localhost:4000/submit-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uid: newUid }),
+      });
 
-        if (response.ok) {
-          const uidExists = true;
-          if (uidExists) {
-            navigate.push("/admin/new-user"); // Navigate to the UserCardCreation page
-          }
+      if (response.ok) {
+        const data = await response.json();
+        console.log('data: ' + data);
 
-          console.log("Code sent to backend successfully");
+        if (data.uid) {
+          navigate('/admin/new-user');
         } else {
-          console.error("Failed to send code to backend");
+          navigate(`/admin/new-card?uid=${data.uid}`);
         }
-
-        if (response.status === 404) {
-          setUIDNotFound(true); // Set the state if UID is not found
-        }
-      } catch (error) {
-        console.error("An error occurred while sending the code:", error);
+      } else {
+        console.error('Failed to send code to backend');
       }
-
+    } catch (error) {
+      console.error('An error occurred while sending the code:', error);
+    }
   };
 
   return (
     <div>
-      {uidNotFound ? (
-        <UIDCreationForm uid={uid} /> // Render the UIDCreationForm if UID not found
-      ) : (
-        <div>
-          <h1>5-Digit Code Generator</h1>
-          <p>Generated Code: {uid}</p>
-          
-            <button onClick={generateCodeAndSendToBackend}>Generate Code</button>
-          
-
-        </div>
-      )}
+      <div>
+        <h1>5-Digit Code Generator</h1>
+        <p>Generated Code: {uid}</p>
+        <button onClick={generateCodeAndSendToBackend}>Generate Code</button>
+      </div>
     </div>
   );
 }

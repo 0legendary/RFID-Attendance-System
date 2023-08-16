@@ -1,11 +1,98 @@
-import React from 'react'
-
+import React, { useState, useEffect } from "react";
 function CardforNewUser() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    // Fetch initial user data from the backend when the component mounts
+    fetch("http://localhost:4000/example")
+      .then((response) => response.json())
+      .then((data) => {
+        setName(data.name);
+        setEmail(data.email);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, []);
+
+  const handlePasswordToggle = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Convert password to bcrypt format and send form data to backend
+    try {
+      const response = await fetch("http://localhost:4000/example", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("User data submitted successfully");
+        // Perform any further actions or show success message to user
+      } else {
+        console.error("Failed to submit user data");
+        // Handle error or show error message to user
+      }
+    } catch (error) {
+      console.error("An error occurred while submitting user data:", error);
+      // Handle error or show error message to user
+    }
+  };
+
   return (
-    <div>
-      ready to create a new User
+    <div className="dark-mode">
+      <div className="uid-creation-form">
+        <h2>Create User</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="uid">UID:</label>
+          <input type="text" id="uid" value='1' readOnly />
+
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <label htmlFor="password">Password:</label>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="button" onClick={handlePasswordToggle}>
+            {showPassword ? 'Hide Password' : 'Show Password'}
+          </button>
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
-  )
+  );
 }
 
-export default CardforNewUser
+export default CardforNewUser;
+

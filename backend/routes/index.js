@@ -13,15 +13,8 @@ app.get('/', function(req, res, next) {
 app.post('/submit-code', (req, res) => {
   const UID = req.body.uid;
   console.log('Received code:', UID);
-  
-  // Simulate that the UID doesn't exist
-  const uidExists = true;
 
-  if (uidExists) {
-    res.send("Code exists in the database.");
-  } else {
-    res.status(404).send("UID not found"); // Sending a status code indicating UID not found
-  }
+  res.status(200).json({ uid: UID }); // Sending UID back to the frontend
 });
 
 
@@ -60,4 +53,32 @@ app.post('/register-card', async (req, res) => {
   }
 });
 
+app.get('/get-user-data', async (req, res) => {
+  const uid = req.query.uid;
+
+  try {
+    // Connect to the database using your custom connection setup
+    dbConnection.connect(async (err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).send('Database connection error');
+      }
+
+      // Get the database instance
+      const db = dbConnection.get();
+
+      // Access the "register-card" collection and find the user data based on UID
+      const userData = await db.collection('register-card').findOne({ uid });
+
+      // Return the user data
+      res.status(200).json(userData);
+    });
+  } catch (error) {
+    console.error('An error occurred while fetching user data:', error);
+    // Handle error or show error message to user
+    res.status(500).send('Error fetching user data');
+  }
+});
+
 module.exports = app;
+

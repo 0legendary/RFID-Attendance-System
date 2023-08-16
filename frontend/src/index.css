@@ -330,6 +330,7 @@ body {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
+    color: grey;
   }
   
   .uid-creation-form input {
@@ -349,3 +350,72 @@ body {
     cursor: pointer;
   }
   
+
+  /* UIDCreationForm.css */
+.dark-mode {
+  background-color: #1f1f1f;
+  color: #ffffff;
+}
+
+.uid-creation-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #292929;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #444;
+  color: #ffffff;
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button[type="button"] {
+  background-color: #6c757d;
+  margin-left: 10px;
+}
+
+button[type="button"]:hover {
+  background-color: #50595e;
+}
+
+button[type="submit"] {
+  background-color: #28a745;
+}
+
+button[type="submit"]:hover {
+  background-color: #1a682c;
+}
