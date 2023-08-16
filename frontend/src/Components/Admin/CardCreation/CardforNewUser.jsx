@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 function CardforNewUser() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const location = useLocation();
+  const userData = location.state.userData;
 
   useEffect(() => {
     // Fetch initial user data from the backend when the component mounts
@@ -58,13 +62,13 @@ function CardforNewUser() {
         <h2>Create User</h2>
         <form onSubmit={handleSubmit}>
           <label htmlFor="uid">UID:</label>
-          <input type="text" id="uid" value='1' readOnly />
+          <input type="text" id="uid" value={userData.uid} readOnly />
 
           <label htmlFor="name">Name:</label>
           <input
             type="text"
             id="name"
-            value={name}
+            value={userData.name}
             onChange={(e) => setName(e.target.value)}
           />
 
@@ -72,7 +76,7 @@ function CardforNewUser() {
           <input
             type="email"
             id="email"
-            value={email}
+            value={userData.email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
@@ -80,7 +84,7 @@ function CardforNewUser() {
           <input
             type={showPassword ? 'text' : 'password'}
             id="password"
-            value={password}
+            value={userData.password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <button type="button" onClick={handlePasswordToggle}>

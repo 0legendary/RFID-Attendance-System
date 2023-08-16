@@ -6,9 +6,9 @@ function GenerateUID() {
   const navigate = useNavigate();
 
   const generateCodeAndSendToBackend = async () => {
-    const newUid = Math.floor(Math.random() * 90000) + 10000;
+    const newUid = 95574
     setUid(newUid);
-
+  
     try {
       const response = await fetch('http://localhost:4000/submit-code', {
         method: 'POST',
@@ -17,15 +17,27 @@ function GenerateUID() {
         },
         body: JSON.stringify({ uid: newUid }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
-        console.log('data: ' + data);
-
+  
         if (data.uid) {
-          navigate('/admin/new-user');
-        } else {
-          navigate(`/admin/new-card?uid=${data.uid}`);
+          try {
+            // Fetch user data from the backend based on data.uid
+            const userDataResponse = await fetch(`http://localhost:4000/get-user-data?uid=${data.uid}`);
+            const userData = await userDataResponse.json();
+  
+            if (userData) {
+              console.log(userData);
+              // User exists, navigate to new-user route
+              navigate('/admin/new-user', { state: { userData } });
+            } else {
+              // User doesn't exist, navigate to new-card route
+              navigate(`/admin/new-card?uid=${data.uid}`);
+            }
+          } catch (error) {
+            console.error('An error occurred while fetching user data:', error);
+          }
         }
       } else {
         console.error('Failed to send code to backend');
@@ -34,6 +46,7 @@ function GenerateUID() {
       console.error('An error occurred while sending the code:', error);
     }
   };
+  
 
   return (
     <div>
