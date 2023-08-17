@@ -10,8 +10,8 @@ function AdminHeader() {
       </div>
       <nav className="navigation">
         <ul>
-          <li><Link to="/admin/dashboard">Dashboard</Link></li>
-          <li><Link to="/admin/student-list">Student List</Link></li>
+          <li><Link to="/admin/rfid-scanned-cards">Cards</Link></li>
+          <li><Link to="/admin">Users</Link></li>
           <li><Link to="/admin/student-logs">Student Logs</Link></li>
         </ul>
       </nav>

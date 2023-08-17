@@ -42,6 +42,8 @@ function CardforNewUser() {
           name,
           email,
           password,
+          tokens: 0,
+          
         }),
       });
 

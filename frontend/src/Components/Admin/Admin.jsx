@@ -1,44 +1,45 @@
-import React from 'react'
-const students = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      tokenBalance: 10,
-      timeHistory: ['09:00 AM', '02:30 PM', '04:15 PM'],
-    },
-    // Add more student objects...
-  ];
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
 function Admin() {
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:4000/get-user-data-for-admin') // Use the correct route
+      .then(response => {
+        setStudents(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  }, []);
+
   return (
     <div className='student-table-bg'>
       <div className="student-table">
-      <table border='1px'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Token Balance</th>
-            <th>Time History</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>{student.email}</td>
-              <td>{student.tokenBalance}</td>
-              <td>{student.timeHistory.join(', ')}</td>
+        <table border='1px'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Token Balance</th>
+              <th>UID</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.uid} className="row">
+                <td>{student.name}</td>
+                <td>{student.email}</td>
+                <td>{student.tokens}</td>
+                <td>{student.uid}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-    {/* const char* ssid = "Alen's Galaxy F12"; // Replace with your WiFi SSID
-const char* password = "olegendary"; // Replace with your WiFi password */}
-
-    </div>
-  )
+  );
 }
 
-export default Admin
+export default Admin;

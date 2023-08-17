@@ -17,6 +17,7 @@ import UserRegistration from "./Components/Admin/UserRegistration";
 import GenerateUID from "./Components/Admin/CardCreation/GenerateUID";
 import CardforNewUser from "./Components/Admin/CardCreation/CardforNewUser";
 import UIDCreationForm from "./Components/Admin/CardCreation/UIDCreationForm";
+import RFIDCardDetails from "./Components/Admin/RFIDCardDetails";
 
 
 
@@ -96,6 +97,13 @@ const CreateNewUserByCard = ()=>{
     </div>
   )
 }
+const RFIDScannedCards = ()=>{
+  return (
+    <div>
+    <RFIDCardDetails/>
+    </div>
+  )
+}
 
 
 function App() {
@@ -116,8 +124,8 @@ function App() {
         <Route path="/admin/register" element={<AdminLayout/>}>
           <Route index element={<Registration/>}></Route>
         </Route>
-        <Route path="/admin/rfi" element={<AdminLayout/>}>
-          <Route index element={<Registration/>}></Route>
+        <Route path="/admin/rfid-scanned-cards" element={<AdminLayout/>}>
+          <Route index element={<RFIDScannedCards/>}></Route>
         </Route>
 
 

@@ -25,6 +25,7 @@ function UIDCreationForm() {
         body: JSON.stringify({
           uid: uidFromQuery,
           identifier,
+          status:false,
         }),
       });
 

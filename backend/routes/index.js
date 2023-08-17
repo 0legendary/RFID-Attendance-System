@@ -35,7 +35,7 @@ app.post('/register-card', async (req, res) => {
       const db = dbConnection.get();
 
       // Access the "register-card" collection and insert the user data
-      db.collection('register-card').insertOne({ uid, identifier}, (err) => {
+      db.collection('register-card').insertOne({ uid, identifier, status:false}, (err) => {
         if (err) {
           console.error('Error inserting user data:', err);
           return res.status(500).send('Error inserting user data');
@@ -80,12 +80,12 @@ app.get('/get-user-data', async (req, res) => {
 });
 
 app.post('/register-user', async (req, res) => {
-  const { uid, identifier, name, email, password } = req.body;
+  const { uid, identifier, name, email, password, tokens } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    dbConnection.connect((err) => {
+    dbConnection.connect(async (err) => {
       if (err) {
         console.error('Error connecting to the database:', err);
         return res.status(500).send('Database connection error');
@@ -94,26 +94,26 @@ app.post('/register-user', async (req, res) => {
       const db = dbConnection.get();
 
       // Access the "users" collection and insert the user data
-      db.collection('users').insertOne({
+      await db.collection('users').insertOne({
         uid,
         identifier,
         name,
         email,
         password: hashedPassword,
-      }, (err) => {
-        if (err) {
-          console.error('Error inserting user data:', err);
-          return res.status(500).send('Error inserting user data');
-        }
-
-        res.status(201).send('User created and data stored successfully');
+        tokens: tokens || 0,
       });
+
+      // Update status in the "register-card" collection
+      await db.collection('register-card').updateOne({ uid }, { $set: { status: true } });
+
+      res.status(201).send('User created and data stored successfully');
     });
   } catch (error) {
     console.error('An error occurred while creating user and storing data:', error);
     res.status(500).send('Error creating user and storing data');
   }
 });
+
 
 
 /* LOGIN USER */
@@ -174,23 +174,8 @@ app.post('/make-payment', async (req, res) => {
       // Get the database instance
       const db = dbConnection.get();
 
-      // Access the "users" collection and find the user data based on UID
-      const user = await db.collection('users').findOne({ uid });
-
-      if (!user) {
-        return res.status(404).send('User not found');
-      }
-
-      if (!user.tokens) {
-        // If "tokens" field doesn't exist, create it and set the initial value
-        user.tokens = balance;
-      } else {
-        // Update the "tokens" field with the new value
-        user.tokens = balance;
-      }
-
       // Update the user's tokens in the database
-      await db.collection('users').updateOne({ uid }, { $set: { tokens: user.tokens } });
+      await db.collection('users').updateOne({ uid }, { $set: { tokens: balance } });
 
       res.status(200).send('Payment processed successfully');
     });
@@ -200,9 +185,58 @@ app.post('/make-payment', async (req, res) => {
     res.status(500).send('Error processing payment');
   }
 });
+/* To show users in admin pannel */
+// Remove the existing "/get-students" route and keep the "/get-user-data" route
+app.get('/get-user-data-for-admin', async (req, res) => {
+  try {
+    // Connect to the database using your custom connection setup
+    dbConnection.connect(async (err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).send('Database connection error');
+      }
+
+      // Get the database instance
+      const db = dbConnection.get();
+
+      // Access the "users" collection and fetch all user data
+      const users = await db.collection('users').find().toArray();
+
+      // Return the user data
+      res.status(200).json(users);
+    });
+  } catch (error) {
+    console.error('An error occurred while fetching user data:', error);
+    // Handle error or show error message to user
+    res.status(500).send('Error fetching user data');
+  }
+});
 
 
+app.get('/get-scanned-card-data', async (req, res) => {
+  try {
+    // Connect to the database using your custom connection setup
+    dbConnection.connect(async (err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).send('Database connection error');
+      }
 
+      // Get the database instance
+      const db = dbConnection.get();
+
+      // Access the "users" collection and fetch all user data
+      const users = await db.collection('register-card').find().toArray();
+      console.log(users);
+      // Return the user data
+      res.status(200).json(users);
+    });
+  } catch (error) {
+    console.error('An error occurred while fetching user data:', error);
+    // Handle error or show error message to user
+    res.status(500).send('Error fetching user data');
+  }
+});
 
 
 module.exports = app;
