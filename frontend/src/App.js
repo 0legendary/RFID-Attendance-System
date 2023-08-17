@@ -48,7 +48,7 @@ const Registration = ()=>{
   )
 }
 
-const HomePageUser = ()=>{
+const  UserLoginPage= ()=>{
   return (
     <div> 
       <LoginPage/>
@@ -57,7 +57,7 @@ const HomePageUser = ()=>{
   )
 }
 
-const UserLoginPage = ()=>{
+const HomePageUser = ()=>{
   return (
     <div>
     <HomePage/>
@@ -103,12 +103,12 @@ function App() {
     createRoutesFromElements(
       <Route>
         <Route path="/" element={<Layout/>}>
+          <Route index element={<UserLoginPage/>}></Route>
+        </Route>
+        <Route path="/home" element={<Layout/>}>
           <Route index element={<HomePageUser/>}></Route>
         </Route>
 
-        <Route path="/login" element={<Layout/>}>
-          <Route index element={<UserLoginPage/>}></Route>
-        </Route>
 
         <Route path="/admin" element={<AdminLayout/>}>
           <Route index element={<AdminHomePage/>}></Route>

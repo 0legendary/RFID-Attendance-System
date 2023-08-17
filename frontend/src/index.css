@@ -352,6 +352,7 @@ body {
   
 
   /* UIDCreationForm.css */
+  
 .dark-mode {
   background-color: #1f1f1f;
   color: #ffffff;
@@ -418,4 +419,36 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   background-color: #1a682c;
+}
+/* Home of Users */
+
+
+.user-page {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-info,
+.add-tokens {
+  width: 45%;
+  background-color: #333333;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.info p {
+  margin: 5px 0;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #444444;
+  color: #ffffff;
+  margin-top: 10px;
 }

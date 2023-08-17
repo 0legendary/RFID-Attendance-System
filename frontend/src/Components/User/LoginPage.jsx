@@ -40,7 +40,7 @@ function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         if(data){
-          navigate.push('/home');
+          navigate('/home', { state: { data } });
         }
 
         alert(data.message); // Display success message as a browser alert

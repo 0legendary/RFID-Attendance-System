@@ -158,24 +158,56 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Error fetching user data');
   }
 });
+app.post('/make-payment', async (req, res) => {
+  const { uid, balance } = req.body;
+  console.log(req.body);
+
+  try {
+    // Connect to the database using your custom connection setup
+    dbConnection.connect(async (err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).send('Database connection error');
+      }
+
+      // Get the database instance
+      const db = dbConnection.get();
+
+      // Find the user by UID
+      const user = await db.collection('users').findOne({ uid });
+
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+
+      if (!user.tokens || user.tokens.length === 0) {
+        // If no "tokens" array exists, create one with the new token value
+        await db.collection('users').updateOne(
+          { uid },
+          { $set: { tokens: [balance] } }
+        );
+      } else {
+        // If "tokens" array exists, update the token value
+        const updatedTokens = user.tokens.map((token) =>
+          typeof token === 'number' ? token + balance : token
+        );
+        
+        await db.collection('users').updateOne(
+          { uid },
+          { $set: { tokens: updatedTokens } }
+        );
+      }
+
+      return res.status(200).send('Tokens added/updated successfully');
+    });
+  } catch (error) {
+    console.error('An error occurred while adding/updating tokens:', error);
+    res.status(500).send('Error adding/updating tokens');
+  }
+});
+
+
+
 
 
 module.exports = app;
-
-
-// dbConnection.connect(); // Await the database connection
-
-//     const db = dbConnection.get();
-//     const user = db.collection('users').findOne({ email });
-
-//     if (!user) {
-//       console.log("Email not found in dbs");
-//       return res.status(404).send('User not found');
-//     }
-
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-
-//     if (!isPasswordValid) {
-//       console.log("Invalid password");
-//       return res.status(401).send('Invalid password');
-//     }
