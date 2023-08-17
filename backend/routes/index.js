@@ -158,9 +158,10 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Error fetching user data');
   }
 });
+
+
 app.post('/make-payment', async (req, res) => {
   const { uid, balance } = req.body;
-  console.log(req.body);
 
   try {
     // Connect to the database using your custom connection setup
@@ -173,36 +174,30 @@ app.post('/make-payment', async (req, res) => {
       // Get the database instance
       const db = dbConnection.get();
 
-      // Find the user by UID
+      // Access the "users" collection and find the user data based on UID
       const user = await db.collection('users').findOne({ uid });
 
       if (!user) {
         return res.status(404).send('User not found');
       }
 
-      if (!user.tokens || user.tokens.length === 0) {
-        // If no "tokens" array exists, create one with the new token value
-        await db.collection('users').updateOne(
-          { uid },
-          { $set: { tokens: [balance] } }
-        );
+      if (!user.tokens) {
+        // If "tokens" field doesn't exist, create it and set the initial value
+        user.tokens = balance;
       } else {
-        // If "tokens" array exists, update the token value
-        const updatedTokens = user.tokens.map((token) =>
-          typeof token === 'number' ? token + balance : token
-        );
-        
-        await db.collection('users').updateOne(
-          { uid },
-          { $set: { tokens: updatedTokens } }
-        );
+        // Update the "tokens" field with the new value
+        user.tokens = balance;
       }
 
-      return res.status(200).send('Tokens added/updated successfully');
+      // Update the user's tokens in the database
+      await db.collection('users').updateOne({ uid }, { $set: { tokens: user.tokens } });
+
+      res.status(200).send('Payment processed successfully');
     });
   } catch (error) {
-    console.error('An error occurred while adding/updating tokens:', error);
-    res.status(500).send('Error adding/updating tokens');
+    console.error('An error occurred while processing payment:', error);
+    // Handle error or show error message to user
+    res.status(500).send('Error processing payment');
   }
 });
 
