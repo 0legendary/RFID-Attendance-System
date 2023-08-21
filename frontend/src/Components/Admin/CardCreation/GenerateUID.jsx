@@ -6,7 +6,7 @@ function GenerateUID() {
   const navigate = useNavigate();
 
   const generateCodeAndSendToBackend = async () => {
-    const newUid = 9553456955
+    const newUid = 955345695872
     setUid(newUid);
   
     try {

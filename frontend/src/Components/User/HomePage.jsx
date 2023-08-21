@@ -4,15 +4,16 @@ import { useLocation } from 'react-router-dom';
 function HomePage() {
   const location = useLocation();
   const userData = location.state.data;
-   
+
   const [balance, setBalance] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState('');
   const [confirmedTokens, setConfirmedTokens] = useState(null); // New state for confirmed tokens
 
   const [tokensOptions] = useState([
-    { label: '10 tokens = 200rs', value: 10 },
-    { label: '20 tokens = 390rs', value: 20 },
-    { label: '30 tokens = 580rs', value: 30 },
+    { label: '10 tokens = 300rs', value: 10 },
+    { label: '20 tokens = 600rs', value: 20 },
+    { label: '30 tokens = 900rs', value: 30 },
   ]);
 
   const handleAddTokens = (value) => {
@@ -26,22 +27,10 @@ function HomePage() {
     // Store the confirmed tokens in state
     setConfirmedTokens(selectedTokens);
 
-    // // Call the backend API to update tokens
-    // const response = await fetch('http://localhost:4000/add-tokens', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ uid: userData.uid, balance: selectedTokens }),
-    // });
-
-    // if (response.ok) {
-    //   console.log('Tokens added successfully');
-    // } else {
-    //   console.error('Error adding tokens');
-    // }
+    setTotalCost(selectedTokens * 30);
+    
   };
-  
+
   const handleMakePayment = async () => {
     // Call the backend API to process payment with the current token balance
     const response = await fetch('http://localhost:4000/make-payment', {
@@ -67,40 +56,59 @@ function HomePage() {
 
 
   return (
-    <div>
-     <div className='user-page'>
-      <div className='user-info'>
-        <h2>User Information</h2>
-        <div className='info'>
-          <h2>Name: {userData.name}</h2>
-          <h2>Email: {userData.email}</h2>
-          <h2>Card: {userData.uid}</h2>
-          <div>
-            <h3>Tokens Balance: {balance}</h3>
-            <button onClick={handleResetTokens}>Reset</button>
-            <button  onClick={handleMakePayment}>Make Payment</button>
+    <div className="home-page">
+      <div className="user-info">
+        <div className='box-heading'>
+          <h2>User Details</h2>
+        </div>
+        <div className="info">
+          <p className='info-username'>
+            User: {userData.name}
+          </p>
+          <p>
+            Email: <span>{userData.email}</span>
+          </p>
+          <p>
+            Card ID: <span>{userData.uid}</span>
+          </p>
+          <div className="tokens-section">
+            <p>
+              Tokens Balance: <span>{balance}</span>
+            </p>
+            <p>
+              Total Cost: {totalCost}rs
+            </p>
           </div>
+          <button className="reset-button" onClick={handleResetTokens}>
+            Reset Tokens
+          </button>
+          <button className="payment-button" onClick={handleMakePayment}>
+            Purchase Tokens
+          </button>
+
         </div>
       </div>
-      <div className='add-tokens'>
-        <h2>Add Tokens</h2>
+      <div className="add-tokens">
+        <h2>Get More Tokens</h2>
         <select
+          className="token-select"
           value={selectedTokens}
           onChange={(e) => handleAddTokens(Number(e.target.value))}
         >
-          <option value=''>Select Tokens</option>
+          <option value="">Select Tokens</option>
           {tokensOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
         </select>
-        <button onClick={handleConfirmTokens}>Confirm</button>
+        <button className="confirm-button" onClick={handleConfirmTokens}>
+          Confirm Purchase
+        </button>
         {confirmedTokens !== null && (
-          <p>Confirmed Tokens: {confirmedTokens}</p>
+          <p className="confirmed-tokens">Confirmed Tokens: {confirmedTokens}</p>
         )}
       </div>
-    </div>
     </div>
   )
 }

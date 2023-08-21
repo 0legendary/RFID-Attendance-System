@@ -1,10 +1,10 @@
-import React,{ useState } from 'react'
-import {useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 
 
 function LoginPage() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState("");
@@ -22,24 +22,9 @@ function LoginPage() {
       });
 
 
-
-      // if (response.ok) {
-      //   const data = await response.json();
-        
-      //   if (data.user) {
-      //     // Navigate to "/home" when user data exists
-      //     navigate.push('/home');
-      //   } else {
-      //     // Handle the case where the user data doesn't exist
-      //     alert('User not found');
-      //   }
-      // } else {
-      //   alert('Login failed');
-      // }
-
       if (response.ok) {
         const data = await response.json();
-        if(data){
+        if (data) {
           navigate('/home', { state: { data } });
         }
 
@@ -58,38 +43,42 @@ function LoginPage() {
   };
 
   return (
-    <div className='login-bg'>
-      <div className="user-login">
-      <div className="login-container">
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="input-group">
-          <label htmlFor="password">Password:</label>
+    <div className='user-login-page'>
+      <div className="login-background">
+        <div className="shape"></div>
+        <div className="shape round"></div>
+        <form className="login-form" onSubmit={handleLogin}>
+          <h3>Login Here</h3>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            placeholder="Email or Phone"
+            id="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <label htmlFor="password">Password</label>
           <input
             type="password"
+            placeholder="Password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button className='login-button'>Log In</button>
+          <div className="social">
+            <div className="go">
+              <i className="fab fa-google"></i> Google
+            </div>
+            <div className="fb">
+              <i className="fab fa-facebook"></i> Facebook
+            </div>
           </div>
-          <button className="login-button" >
-            Log In
-          </button>
         </form>
       </div>
     </div>
-    </div>
+
+
   )
 }
 
