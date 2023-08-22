@@ -683,6 +683,7 @@ button[type="submit"]:hover {
   background-color: #1e1e1e;
   border-radius: 8px;
   padding: 20px;
+  width: 30rem;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 

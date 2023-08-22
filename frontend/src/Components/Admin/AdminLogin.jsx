@@ -24,7 +24,7 @@ function AdminLogin() {
 
         // Store login as cookies for 5 minutes
         const now = new Date();
-        const expirationDate = new Date(now.getTime() + 5 * 1000);
+        const expirationDate = new Date(now.getTime() + 60 * 60 * 1000);
         console.log(expirationDate);
         document.cookie = `adminLoggedIn=true; expires=${expirationDate.toUTCString()}`;
       } else {
