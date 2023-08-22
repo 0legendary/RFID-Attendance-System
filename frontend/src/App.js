@@ -18,6 +18,7 @@ import GenerateUID from "./Components/Admin/CardCreation/GenerateUID";
 import CardforNewUser from "./Components/Admin/CardCreation/CardforNewUser";
 import UIDCreationForm from "./Components/Admin/CardCreation/UIDCreationForm";
 import RFIDCardDetails from "./Components/Admin/RFIDCardDetails";
+import AdminLogin from "./Components/Admin/AdminLogin";
 
 
 
@@ -127,6 +128,7 @@ function App() {
         <Route path="/admin/rfid-scanned-cards" element={<AdminLayout/>}>
           <Route index element={<RFIDScannedCards/>}></Route>
         </Route>
+        <Route path="/admin-login" index element={<AdminLogin/>}></Route>
 
 
         <Route path="/admin/generateuid" element={<AdminLayout/>}>

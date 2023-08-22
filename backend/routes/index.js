@@ -6,6 +6,20 @@ const dbConnection = require('../config/connection')
 const bcrypt = require('bcrypt');
 
 // Route to render your React component
+app.post('/check-admin-auth', (req, res) => {
+  const { email, password } = req.body;
+
+  // Replace with your actual admin credentials
+  const adminEmail = 'alen@gmail.com';
+  const adminPassword = 'alen123';
+
+  if (email === adminEmail && password === adminPassword) {
+    res.status(200).send('Admin authenticated');
+  } else {
+    res.status(401).send('Unauthorized');
+  }
+});
+
 app.get('/', function(req, res, next) {
   res.render('index.jsx', { title: 'UID Generator' });
 });

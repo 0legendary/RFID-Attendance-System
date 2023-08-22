@@ -26,6 +26,7 @@ function RFIDCardDetails() {
             <th>Card ID</th>
             <th>Identification</th>
             <th>Status</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -35,7 +36,6 @@ function RFIDCardDetails() {
               <td>{card.uid}</td>
               <td>{card.identifier}</td>
               <td>{card.status ? 'used' : 'not in use'}</td>
-              
             </tr>
           ))}
         </tbody>
