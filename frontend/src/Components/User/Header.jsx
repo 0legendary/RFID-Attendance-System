@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../Images/rfid-logo.png';
 
 function Header() {
-
   const Navigate = useNavigate();
 
-  const checkAdminAuthentication = async () => {
-    try {
-      Navigate('/admin-login'); // Redirect to admin login page
-    } catch (error) {
-      console.error('Error checking admin authentication:', error);
+  const checkAdminAuthentication = () => {
+    const adminLoginTime = localStorage.getItem('adminLoginTime');
+    if (adminLoginTime && Date.now() - adminLoginTime <= 3600000) { // 1 hour in milliseconds
+      Navigate('/admin');
+    } else {
+      Navigate('/admin-login');
     }
   };
 

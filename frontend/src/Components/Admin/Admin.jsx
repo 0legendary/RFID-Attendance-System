@@ -4,11 +4,10 @@ import axios from 'axios';
 
 function Admin() {
   const [students, setStudents] = useState([]);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
   const Navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:4000/get-user-data-for-admin') // Use the correct route
+    axios.get('http://localhost:4000/get-user-data-for-admin')
       .then(response => {
         setStudents(response.data);
       })
@@ -16,20 +15,11 @@ function Admin() {
         console.error('Error fetching user data:', error);
       });
 
-    // Check for the adminLoggedIn cookie and its expiration
-    const adminLoggedIn = document.cookie.includes('adminLoggedIn=true');
-    const cookies = document.cookie.split(';');
-    const expirationCookie = cookies.find(cookie => cookie.trim().startsWith('adminLoggedIn='));
-
-    if (!adminLoggedIn || (expirationCookie && new Date(expirationCookie.split('=')[1]) < new Date())) {
-      setShouldRedirect(true);
+    const adminLoginTime = localStorage.getItem('adminLoginTime');
+    if (!adminLoginTime || Date.now() - adminLoginTime > 3600000) { // More than 1 hour
+      Navigate('/admin-login');
     }
-  }, []);
-
-  if (shouldRedirect) {
-    Navigate('/admin-login');
-    return null;
-  }
+  }, [Navigate]);
   return (
     <div className="attendance-table-container">
       <table className="attendance-table">
