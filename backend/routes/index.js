@@ -20,7 +20,7 @@ app.post('/check-admin-auth', (req, res) => {
   }
 });
 
-app.get('/', function(req, res, next) {
+app.get('/', function (req, res, next) {
   res.render('index.jsx', { title: 'UID Generator' });
 });
 
@@ -33,12 +33,12 @@ app.post('/submit-code', (req, res) => {
 
 
 app.post('/register-card', async (req, res) => {
-  
-  const { uid, identifier} = req.body;
+
+  const { uid, identifier } = req.body;
   console.log(req.body);
 
   try {
-    
+
     dbConnection.connect((err) => {
       if (err) {
         console.error('Error connecting to the database:', err);
@@ -49,7 +49,7 @@ app.post('/register-card', async (req, res) => {
       const db = dbConnection.get();
 
       // Access the "register-card" collection and insert the user data
-      db.collection('register-card').insertOne({ uid, identifier, status:false}, (err) => {
+      db.collection('register-card').insertOne({ uid, identifier, status: false }, (err) => {
         if (err) {
           console.error('Error inserting user data:', err);
           return res.status(500).send('Error inserting user data');
@@ -133,7 +133,7 @@ app.post('/register-user', async (req, res) => {
 /* LOGIN USER */
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  
+
 
   try {
     // Connect to the database using your custom connection setup
@@ -148,15 +148,15 @@ app.post('/login', async (req, res) => {
 
       // Access the "register-card" collection and find the user data based on UID
       const user = await db.collection('users').findOne({ email });
-      
-      
+
+
       if (!user) {
         console.log("Email not found in dbs");
         return res.status(404).send('User not found');
       }
-  
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
-  
+
       if (!isPasswordValid) {
         console.log("Invalid password");
         return res.status(401).send('Invalid password');
@@ -164,7 +164,7 @@ app.post('/login', async (req, res) => {
 
       // Return the user data
       res.status(200).json(user);
-      
+
     });
   } catch (error) {
     console.error('An error occurred while fetching user data:', error);
@@ -174,7 +174,7 @@ app.post('/login', async (req, res) => {
 });
 
 
-app.post('/make-payment', async (req, res) => {
+app.post('/purchase-tokens', async (req, res) => {
   const { uid, balance } = req.body;
 
   try {
@@ -189,9 +189,15 @@ app.post('/make-payment', async (req, res) => {
       const db = dbConnection.get();
 
       // Update the user's tokens in the database
-      await db.collection('users').updateOne({ uid }, { $set: { tokens: balance } });
+      await db.collection('users').updateOne({ uid }, { $inc: { tokens: balance } });
 
-      res.status(200).send('Payment processed successfully');
+
+      const updatedUser = await db.collection('users').findOne({ uid }); // Retrieve the user with the updated token balance
+      console.log(updatedUser);
+      const updatedTokens = updatedUser.tokens;
+      console.log(updatedTokens);
+
+      res.status(200).json({ message: 'Tokens purchased successfully', updatedTokens });
     });
   } catch (error) {
     console.error('An error occurred while processing payment:', error);
@@ -199,6 +205,8 @@ app.post('/make-payment', async (req, res) => {
     res.status(500).send('Error processing payment');
   }
 });
+
+
 /* To show users in admin pannel */
 // Remove the existing "/get-students" route and keep the "/get-user-data" route
 app.get('/get-user-data-for-admin', async (req, res) => {

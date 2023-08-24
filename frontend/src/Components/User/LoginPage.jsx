@@ -28,6 +28,7 @@ function LoginPage() {
          
 
           navigate('/home', { state: { data } });
+          console.log(data);
         }
 
         alert(data.message); // Display success message as a browser alert
