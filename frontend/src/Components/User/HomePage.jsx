@@ -6,11 +6,12 @@ function HomePage() {
   const userData = location.state.data;
   console.log(userData);
 
-  const [balance, setBalance] = useState(0);
-  const [totalCost, setTotalCost] = useState(0);
+
   const [selectedTokens, setSelectedTokens] = useState('');
-  const [confirmedTokens, setConfirmedTokens] = useState(0);
-  const [updatedTokens, setUpdatedTokens] = useState(null); // Add this state
+
+  const [confirmedToken, setConfirmedToken] = useState(0)
+  const [totalSelectedTokens, setTotalSelectedTokens] = useState(0);
+
 
   const [tokensOptions] = useState([
     { label: '10 tokens = 300rs', value: 10 },
@@ -23,9 +24,8 @@ function HomePage() {
   };
 
   const handleConfirmTokens = () => {
-    setBalance(balance + selectedTokens);
-    setConfirmedTokens(selectedTokens);
-    setTotalCost(selectedTokens * 30);
+    setConfirmedToken(selectedTokens);
+    setTotalSelectedTokens((prevTotalSelectedTokens) => prevTotalSelectedTokens + selectedTokens);
   };
 
   const handlePurchase = async () => {
@@ -37,19 +37,17 @@ function HomePage() {
         },
         body: JSON.stringify({
           uid: userData.uid,
-          balance: confirmedTokens,
+          balance: totalSelectedTokens,
         }),
+        
       });
-
+      
       if (response.status === 200) {
-        const responseData = await response.json();
+        // const responseData = await response.json();
         console.log('Tokens purchased successfully');
 
         // Update the user's token balance in the userData state directly
-        userData.tokens = responseData.updatedTokens;
-        setUpdatedTokens(responseData.updatedTokens); // Update the state with the new token balance
-        console.log(userData);
-        console.log(updatedTokens);
+        
         
       } else {
         console.error('Error purchasing tokens');
@@ -59,10 +57,13 @@ function HomePage() {
     }
   };
 
+
   const handleResetTokens = () => {
-    setBalance(0);
-    setConfirmedTokens(null);
+    setConfirmedToken(0);
+    setTotalSelectedTokens(0);
   };
+  const totalCost = confirmedToken * 30;
+
   
   return (
     <div className="home-page">
@@ -82,11 +83,10 @@ function HomePage() {
           </p>
           <div className="tokens-section">
             <p>
-              Tokens Balance:{userData.tokens} {/* i want to show here the latest "tokens" in the dbs */}
+              Tokens Balance: {/* i want to show here the latest "tokens" in the dbs */}
             </p>
             <div className='flex'>
-              <p>Total Cost: {totalCost}rs  ||||  Token selected:  <span>{confirmedTokens}</span></p>
-              
+            <p>Total Cost: {totalCost}rs |||| Token selected:  <span>{totalSelectedTokens}</span></p>
             </div>
 
           </div>
@@ -114,14 +114,17 @@ function HomePage() {
           ))}
         </select>
         <button className="confirm-button" onClick={handleConfirmTokens}>
-          Confirm Purchase
+          Confirm Tokens
         </button>
-        {confirmedTokens !== null && (
-          <p className="confirmed-tokens">Confirmed Tokens: {confirmedTokens}</p>
-        )}
+       
+          <p className="confirmed-tokens">Confirmed Tokens: {confirmedToken} </p>
+        
       </div>
     </div>
   )
 }
 
 export default HomePage
+
+
+// all is working fine as i needed but..assume that the value in "{confirmedToken}"  is 10, when i click "Confirmed Tokens" button, the 10 is passing to here "<span>{confirmedToken}</span>" correctly, when i agian click "Confirmed Tokens" button, with 10" the 10 is adding to "<span>{confirmedToken}</span>"  here as i wanted...but when i select manually another token of 30 and click the "Confirmed Tokens" button,  
