@@ -11,7 +11,7 @@ app.post('/check-admin-auth', (req, res) => {
 
   // Replace with your actual admin credentials
   const adminEmail = 'alen@gmail.com';
-  const adminPassword = 'alen123';
+  const adminPassword = '123';
 
   if (email === adminEmail && password === adminPassword) {
     res.status(200).send('Admin authenticated');
@@ -193,7 +193,7 @@ app.post('/purchase-tokens', async (req, res) => {
 
 
       const updatedUser = await db.collection('users').findOne({ uid }); // Retrieve the user with the updated token balance
-      console.log(updatedUser);
+      //console.log(updatedUser);
       const updatedTokens = updatedUser.tokens;
       console.log(updatedTokens);
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function HomePage() {
@@ -11,6 +11,23 @@ function HomePage() {
 
   const [confirmedToken, setConfirmedToken] = useState(0)
   const [totalSelectedTokens, setTotalSelectedTokens] = useState(0);
+  const [updatedTokens, setUpdatedTokens] = useState(null);
+
+
+
+  useEffect(() => {
+    const storedUpdatedTokens = localStorage.getItem('updatedTokens');
+    if (storedUpdatedTokens !== null) {
+      setUpdatedTokens(parseInt(storedUpdatedTokens));
+    }
+  }, []);
+
+  // Save updatedTokens to local storage whenever it changes
+  useEffect(() => {
+    if (updatedTokens !== null) {
+      localStorage.setItem('updatedTokens', updatedTokens.toString());
+    }
+  }, [updatedTokens]);
 
 
   const [tokensOptions] = useState([
@@ -39,16 +56,17 @@ function HomePage() {
           uid: userData.uid,
           balance: totalSelectedTokens,
         }),
-        
+
       });
-      
+
       if (response.status === 200) {
-        // const responseData = await response.json();
+        const responseData = await response.json();
         console.log('Tokens purchased successfully');
 
         // Update the user's token balance in the userData state directly
-        
-        
+        setUpdatedTokens(responseData.updatedTokens);
+
+
       } else {
         console.error('Error purchasing tokens');
       }
@@ -64,7 +82,7 @@ function HomePage() {
   };
   const totalCost = confirmedToken * 30;
 
-  
+
   return (
     <div className="home-page">
       <div className="user-info">
@@ -83,10 +101,10 @@ function HomePage() {
           </p>
           <div className="tokens-section">
             <p>
-              Tokens Balance: {/* i want to show here the latest "tokens" in the dbs */}
+              Tokens Balance: {updatedTokens !== null ? updatedTokens : userData.tokens}
             </p>
             <div className='flex'>
-            <p>Total Cost: {totalCost}rs |||| Token selected:  <span>{totalSelectedTokens}</span></p>
+              <p>Total Cost: {totalCost}rs |||| Token selected:  <span>{totalSelectedTokens}</span></p>
             </div>
 
           </div>
@@ -116,9 +134,9 @@ function HomePage() {
         <button className="confirm-button" onClick={handleConfirmTokens}>
           Confirm Tokens
         </button>
-       
-          <p className="confirmed-tokens">Confirmed Tokens: {confirmedToken} </p>
-        
+
+        <p className="confirmed-tokens">Confirmed Tokens: {confirmedToken} </p>
+
       </div>
     </div>
   )
@@ -127,4 +145,3 @@ function HomePage() {
 export default HomePage
 
 
-// all is working fine as i needed but..assume that the value in "{confirmedToken}"  is 10, when i click "Confirmed Tokens" button, the 10 is passing to here "<span>{confirmedToken}</span>" correctly, when i agian click "Confirmed Tokens" button, with 10" the 10 is adding to "<span>{confirmedToken}</span>"  here as i wanted...but when i select manually another token of 30 and click the "Confirmed Tokens" button,  
