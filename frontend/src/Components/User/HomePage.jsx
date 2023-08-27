@@ -80,7 +80,7 @@ function HomePage() {
     setConfirmedToken(0);
     setTotalSelectedTokens(0);
   };
-  const totalCost = confirmedToken * 30;
+  const totalCost = confirmedToken * 15;
 
 
   return (

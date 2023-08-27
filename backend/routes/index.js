@@ -20,17 +20,21 @@ app.post('/check-admin-auth', (req, res) => {
   }
 });
 
+
+
+
 app.get('/', function (req, res, next) {
   res.render('index.jsx', { title: 'UID Generator' });
 });
 
+/* this endpoint is in POST method, i changed into Get  */
 app.post('/submit-code', (req, res) => {
-  const UID = req.body.uid;
-  console.log('Received code:', UID);
+  console.log('Received a request to /submit-code');
+  const UID = 5445345545468694;
+  console.log('Sending code:', UID);
 
   res.status(200).json({ uid: UID }); // Sending UID back to the frontend
 });
-
 
 app.post('/register-card', async (req, res) => {
 
@@ -195,7 +199,7 @@ app.post('/purchase-tokens', async (req, res) => {
       const updatedUser = await db.collection('users').findOne({ uid }); // Retrieve the user with the updated token balance
       //console.log(updatedUser);
       const updatedTokens = updatedUser.tokens;
-      console.log(updatedTokens);
+      
 
       res.status(200).json({ message: 'Tokens purchased successfully', updatedTokens });
     });
@@ -259,6 +263,7 @@ app.get('/get-scanned-card-data', async (req, res) => {
     res.status(500).send('Error fetching user data');
   }
 });
+
 
 
 module.exports = app;
