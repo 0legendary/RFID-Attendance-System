@@ -66,7 +66,7 @@ app.post('/register-card', async (req, res) => {
 /* this endpoint is in POST method, i changed into Get  */
 app.post('/submit-code', (req, res) => {
 
-  const UID = 9553456951                ;
+  const UID = 54453455                ;
   //console.log('Sending code:', UID);
 
   res.status(200).json({ uid: UID }); // Sending UID back to the frontend
@@ -75,6 +75,7 @@ app.post('/submit-code', (req, res) => {
 
 app.get('/get-user-data', async (req, res) => {
   const uid = req.query.uid;
+  console.log(uid);
 
   try {
     // Connect to the database using your custom connection setup
@@ -90,8 +91,8 @@ app.get('/get-user-data', async (req, res) => {
 
       // Access the "register-card" collection and find the user data based on UID
       const userAcc = await db.collection('users').findOne({ uid });
-      console.log(userAcc.tokens);
-      if(userAcc.tokens){
+      console.log("The USER is not Registered or created his account");
+      if(userAcc){
         if(userAcc.tokens>0){
           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
         console.log("User is Existing, one token Didected");

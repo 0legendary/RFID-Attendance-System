@@ -62,7 +62,7 @@ function GenerateUID() {
         if (response.ok) {
           const data = await response.json();
           if (data.uid !== uid) {
-            console.log(data.uid, uid);
+            //console.log(data.uid, uid);
             setUid(data.uid);
             generateCodeAndSendToBackend();
           }
@@ -71,6 +71,7 @@ function GenerateUID() {
         console.error('An error occurred while checking UID change:', error);
       }
     };
+    
 
     const intervalId = setInterval(checkForUidChange, pollingInterval);
 
