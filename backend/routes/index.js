@@ -27,14 +27,7 @@ app.get('/', function (req, res, next) {
   res.render('index.jsx', { title: 'UID Generator' });
 });
 
-/* this endpoint is in POST method, i changed into Get  */
-app.post('/submit-code', (req, res) => {
-  console.log('Received a request to /submit-code');
-  const UID = 5445345545468694;
-  console.log('Sending code:', UID);
 
-  res.status(200).json({ uid: UID }); // Sending UID back to the frontend
-});
 
 app.post('/register-card', async (req, res) => {
 
@@ -70,6 +63,16 @@ app.post('/register-card', async (req, res) => {
   }
 });
 
+/* this endpoint is in POST method, i changed into Get  */
+app.post('/submit-code', (req, res) => {
+
+  const UID = 9553456951                ;
+  //console.log('Sending code:', UID);
+
+  res.status(200).json({ uid: UID }); // Sending UID back to the frontend
+});
+
+
 app.get('/get-user-data', async (req, res) => {
   const uid = req.query.uid;
 
@@ -83,12 +86,26 @@ app.get('/get-user-data', async (req, res) => {
 
       // Get the database instance
       const db = dbConnection.get();
+      
 
       // Access the "register-card" collection and find the user data based on UID
-      const userData = await db.collection('register-card').findOne({ uid });
-
+      const userAcc = await db.collection('users').findOne({ uid });
+      console.log(userAcc.tokens);
+      if(userAcc.tokens){
+        if(userAcc.tokens>0){
+          await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
+        console.log("User is Existing, one token Didected");
+        }else{
+          console.log("Insufficiet Balance");
+        }
+        
+      }else{
+        const userData = await db.collection('register-card').findOne({ uid });
+         res.status(200).json(userData);
+      }
       // Return the user data
-      res.status(200).json(userData);
+     
+      
     });
   } catch (error) {
     console.error('An error occurred while fetching user data:', error);
@@ -96,6 +113,51 @@ app.get('/get-user-data', async (req, res) => {
     res.status(500).send('Error fetching user data');
   }
 });
+
+// app.get('/get-user-data',  (req, res) => {
+//   const uid = req.query.uid;
+
+//   dbConnection.connect(async (err) => {
+//     try {
+//       // Connect to the database using your custom connection setup
+//       const db = dbConnection.get();
+
+//       // Access the "register-card" collection and find the user data based on UID
+//       const user = await db.collection('users').findOne({ uid });
+//       console.log(user);
+
+//       if (user) {
+//         if (user.tokens > 0) {
+//           // Decrement tokens and return true
+//           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
+//           // res.status(200).json({ isValid: true });
+//           console.log("true");
+//           return; 
+//         } else {
+//           // Return false if tokens are <= 0
+//           // res.status(200).json({ isValid: false });
+          
+//           console.log("false");
+//           return; 
+//         }
+        
+//       } 
+//         // Access the "register-card" collection and find the user data based on UID
+//         const userData = await db.collection('register-card').findOne({ uid });
+
+//         if (userData) {
+//           res.status(200).json(userData);
+//         } else {
+//           res.status(404).json({ error: 'User not found' });
+//         }
+      
+//     } catch (error) {
+//       console.error('An error occurred:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//   })
+// });
+
 
 app.post('/register-user', async (req, res) => {
   const { uid, identifier, name, email, password, tokens } = req.body;
@@ -199,7 +261,7 @@ app.post('/purchase-tokens', async (req, res) => {
       const updatedUser = await db.collection('users').findOne({ uid }); // Retrieve the user with the updated token balance
       //console.log(updatedUser);
       const updatedTokens = updatedUser.tokens;
-      
+
 
       res.status(200).json({ message: 'Tokens purchased successfully', updatedTokens });
     });

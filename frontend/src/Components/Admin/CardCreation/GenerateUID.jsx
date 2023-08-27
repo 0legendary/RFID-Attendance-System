@@ -25,7 +25,8 @@ function GenerateUID() {
             const userDataResponse = await fetch(`http://localhost:4000/get-user-data?uid=${data.uid}`);
             const userData = await userDataResponse.json();
 
-            if (userData) {
+            if(userData){
+             
               console.log(userData);
               // User exists, navigate to new-user route
               navigate('/admin/new-user', { state: { userData } });
@@ -33,6 +34,7 @@ function GenerateUID() {
               // User doesn't exist, navigate to new-card route
               navigate(`/admin/new-card?uid=${data.uid}`);
             }
+            
           } catch (error) {
             console.error('An error occurred while fetching user data:', error);
           }
@@ -46,7 +48,7 @@ function GenerateUID() {
   };
 
   useEffect(() => {
-    const pollingInterval = 5000; // 5 seconds
+    const pollingInterval = 3000; // 5 seconds
 
     const checkForUidChange = async () => {
       console.log('Checking for UID change...');
@@ -84,7 +86,6 @@ function GenerateUID() {
       <div>
         <h1>5-Digit Code Generator</h1>
         <p>Generated Code: {uid}</p>
-        <button onClick={generateCodeAndSendToBackend}>Generate Code</button>
       </div>
     </div>
   );
