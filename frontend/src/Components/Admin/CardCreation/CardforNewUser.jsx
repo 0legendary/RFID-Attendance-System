@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+
 
 function CardforNewUser() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const location = useLocation();
+
   
   const storedUserData = localStorage.getItem("userData");
     const userData = storedUserData ? JSON.parse(storedUserData) : null;

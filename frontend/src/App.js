@@ -2,7 +2,7 @@
 import LoginPage from "./Components/User/LoginPage";
 import HomePage from "./Components/User/HomePage";
 import Header from "./Components/User/Header";
-import Footer from "./Components/User/Footer";
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -37,7 +37,7 @@ const AdminLayout = ()=>{
     <div>
       <AdminHeader/>
       <Outlet />
-      <Footer/>
+      
     </div>
    
   )
