@@ -274,7 +274,7 @@ app.get('/get-scanned-card-data', async (req, res) => {
 
       // Access the "users" collection and fetch all user data
       const users = await db.collection('register-card').find().toArray();
-      console.log(users);
+      //console.log(users);
       // Return the user data
       res.status(200).json(users);
     });
@@ -295,6 +295,23 @@ app.delete('/delete-user/:uid', async (req, res) => {
 
     // Update status in 'register-card' collection
     await db.collection('register-card').updateOne({ uid }, { $set: { status: false } });
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('An error occurred while deleting user:', error);
+    res.status(500).json({ message: 'Error deleting user' });
+  }
+});
+
+app.delete('/delete-rfid-card/:uid', async (req, res) => {
+  const uid = req.params.uid;
+  const db = dbConnection.get();
+  try {
+    // Delete card from 'register-card' collection
+    await db.collection('register-card').deleteOne({ uid });
+
+    //Delete user from 'users' collection
+    await db.collection('users').deleteOne({ uid });
 
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {

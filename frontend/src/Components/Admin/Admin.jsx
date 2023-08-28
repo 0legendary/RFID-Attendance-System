@@ -36,7 +36,8 @@ function Admin() {
     if (confirmation) {
       axios.delete(`http://localhost:4000/delete-user/${uid}`)
         .then(response => {
-          console.log(response.data);
+          
+          //console.log(response.data);
           fetchStudentsData(); // Fetch updated data after deletion
         })
         .catch(error => {
