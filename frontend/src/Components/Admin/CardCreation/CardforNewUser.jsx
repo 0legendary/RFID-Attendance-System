@@ -7,9 +7,13 @@ function CardforNewUser() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
-  const userData = location.state.userData;
+  
+  const storedUserData = localStorage.getItem("userData");
+    const userData = storedUserData ? JSON.parse(storedUserData) : null;
+  console.log(userData);
 
   useEffect(() => {
+    
     // Fetch initial user data from the backend when the component mounts
     fetch(`http://localhost:4000/get-user-data?uid=${userData.uid}`)
       .then((response) => response.json())

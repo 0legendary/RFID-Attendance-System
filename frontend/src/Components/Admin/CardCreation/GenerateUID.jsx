@@ -34,11 +34,16 @@ function GenerateUID() {
             } else if (userData.message === "User Registered but not created Account") {
               console.log(userData.data+ "Registered, not created and account"); // userData object
               // Logic for handling "User Registered but not created Account" message
-              navigate('/admin/new-user', { state: { userData: userData.data } });
+              
+              localStorage.setItem("userData", JSON.stringify(userData.data));
+
+              // Open a new window with the CardforNewUser component
+              window.open("/admin/new-user", "_blank");
+
             } else if (userData.message === "A new card is detected") {
               console.log(userData.data + "New UID detected"); // null
               // Logic for handling "A new card is detected" message
-              navigate(`/admin/new-card?uid=${data.uid}`);
+              window.open(`/admin/new-card?uid=${data.uid}`);
             }
             
           } catch (error) {

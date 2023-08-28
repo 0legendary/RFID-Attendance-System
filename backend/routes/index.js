@@ -66,7 +66,7 @@ app.post('/register-card', async (req, res) => {
 /* this endpoint is in POST method, i changed into Get  */
 app.post('/submit-code', (req, res) => {
 
-  const UID = 955345695755                ;
+  const UID = 95534245                ;
   //console.log('Sending code:', UID);
 
   res.status(200).json({ uid: UID }); // Sending UID back to the frontend
@@ -75,7 +75,7 @@ app.post('/submit-code', (req, res) => {
 
 app.get('/get-user-data', async (req, res) => {
   const uid = req.query.uid;
-  console.log(uid);
+  //console.log(uid);
 
   try {
     // Connect to the database using your custom connection setup
@@ -108,7 +108,7 @@ app.get('/get-user-data', async (req, res) => {
         if(userData){
           console.log("User Registered his card but not created his Account");
           res.status(200).json({ message: "User Registered but not created Account", data: userData });
-          console.log(userData);
+          //console.log(userData);
         }else{
           console.log("A new card is detected");
           res.status(200).json({ message: "A new card is detected", data: null });
