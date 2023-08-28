@@ -25,13 +25,19 @@ function GenerateUID() {
             const userDataResponse = await fetch(`http://localhost:4000/get-user-data?uid=${data.uid}`);
             const userData = await userDataResponse.json();
 
-            if(userData){
-             
-              console.log(userData);
-              // User exists, navigate to new-user route
-              navigate('/admin/new-user', { state: { userData } });
-            } else {
-              // User doesn't exist, navigate to new-card route
+            if (userData.message === "One token Deducted") {
+              console.log(userData.data + "One Token is deducted"); // userAcc object
+              // Logic for handling "One token Deducted" message
+            } else if (userData.message === "Insufficient Balance") {
+              console.log(userData.data + "Insuffieciet Balance"); // userAcc object
+              // Logic for handling "Insufficient Balance" message
+            } else if (userData.message === "User Registered but not created Account") {
+              console.log(userData.data+ "Registered, not created and account"); // userData object
+              // Logic for handling "User Registered but not created Account" message
+              navigate('/admin/new-user', { state: { userData: userData.data } });
+            } else if (userData.message === "A new card is detected") {
+              console.log(userData.data + "New UID detected"); // null
+              // Logic for handling "A new card is detected" message
               navigate(`/admin/new-card?uid=${data.uid}`);
             }
             

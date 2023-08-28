@@ -66,7 +66,7 @@ app.post('/register-card', async (req, res) => {
 /* this endpoint is in POST method, i changed into Get  */
 app.post('/submit-code', (req, res) => {
 
-  const UID = 54453455                ;
+  const UID = 955345695755                ;
   //console.log('Sending code:', UID);
 
   res.status(200).json({ uid: UID }); // Sending UID back to the frontend
@@ -91,18 +91,29 @@ app.get('/get-user-data', async (req, res) => {
 
       // Access the "register-card" collection and find the user data based on UID
       const userAcc = await db.collection('users').findOne({ uid });
-      console.log("The USER is not Registered or created his account");
+      
       if(userAcc){
         if(userAcc.tokens>0){
           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
-        console.log("User is Existing, one token Didected");
+        console.log("User is Existing, one token Diducted");
+        res.status(200).json({ message: "One token Deducted", data: userAcc });
         }else{
           console.log("Insufficiet Balance");
+          res.status(200).json({ message: "Insufficient Balance", data: userAcc });
+
         }
         
       }else{
         const userData = await db.collection('register-card').findOne({ uid });
-         res.status(200).json(userData);
+        if(userData){
+          console.log("User Registered his card but not created his Account");
+          res.status(200).json({ message: "User Registered but not created Account", data: userData });
+          console.log(userData);
+        }else{
+          console.log("A new card is detected");
+          res.status(200).json({ message: "A new card is detected", data: null });
+        }
+         
       }
       // Return the user data
      
@@ -111,53 +122,9 @@ app.get('/get-user-data', async (req, res) => {
   } catch (error) {
     console.error('An error occurred while fetching user data:', error);
     // Handle error or show error message to user
-    res.status(500).send('Error fetching user data');
+    res.status(500).json({ message: "Error fetching user data", data: null });
   }
 });
-
-// app.get('/get-user-data',  (req, res) => {
-//   const uid = req.query.uid;
-
-//   dbConnection.connect(async (err) => {
-//     try {
-//       // Connect to the database using your custom connection setup
-//       const db = dbConnection.get();
-
-//       // Access the "register-card" collection and find the user data based on UID
-//       const user = await db.collection('users').findOne({ uid });
-//       console.log(user);
-
-//       if (user) {
-//         if (user.tokens > 0) {
-//           // Decrement tokens and return true
-//           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
-//           // res.status(200).json({ isValid: true });
-//           console.log("true");
-//           return; 
-//         } else {
-//           // Return false if tokens are <= 0
-//           // res.status(200).json({ isValid: false });
-          
-//           console.log("false");
-//           return; 
-//         }
-        
-//       } 
-//         // Access the "register-card" collection and find the user data based on UID
-//         const userData = await db.collection('register-card').findOne({ uid });
-
-//         if (userData) {
-//           res.status(200).json(userData);
-//         } else {
-//           res.status(404).json({ error: 'User not found' });
-//         }
-      
-//     } catch (error) {
-//       console.error('An error occurred:', error);
-//       res.status(500).json({ error: 'Internal server error' });
-//     }
-//   })
-// });
 
 
 app.post('/register-user', async (req, res) => {
