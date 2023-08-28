@@ -26,8 +26,8 @@ function AdminHeader() {
         </ul>
       </nav>
       <div>
-     
-      <Link to="/admin/register" className="register-button">Register New Student</Link>
+
+      <Link to="/admin/generateuid" className="register-button">Scanning</Link>
       <button className="btn btn-success ml-3" onClick={handleLogout}>Log out</button>
       </div>
       

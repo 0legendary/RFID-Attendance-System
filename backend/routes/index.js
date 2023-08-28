@@ -57,7 +57,7 @@ app.post('/register-card', async (req, res) => {
 /* this endpoint is in POST method, i changed into Get  */
 app.post('/submit-code', (req, res) => {
 
-  const UID = 9553424554336;
+  const UID = 955345695;
   //console.log('Sending code:', UID);
 
   res.status(200).json({ uid: UID }); // Sending UID back to the frontend
@@ -159,7 +159,6 @@ app.post('/register-user', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-
   try {
     // Connect to the database using your custom connection setup
     dbConnection.connect(async (err) => {
@@ -171,9 +170,8 @@ app.post('/login', async (req, res) => {
       // Get the database instance
       const db = dbConnection.get();
 
-      // Access the "register-card" collection and find the user data based on UID
+      // Access the "register-card" collection and find the user data based on email
       const user = await db.collection('users').findOne({ email });
-
 
       if (!user) {
         console.log("Email not found in dbs");
@@ -186,17 +184,54 @@ app.post('/login', async (req, res) => {
         console.log("Invalid password");
         return res.status(401).send('Invalid password');
       }
-
-      // Return the user data
-      res.status(200).json(user);
-
+      
+      // Call another endpoint by passing user.uid
+      fetch(`http://localhost:4000/get-tokens-balance/${user.uid}`)
+        .then(response => response.json())
+        .then(data => {
+          // Return the user data along with tokens
+          res.status(200).json({ ...user, tokens: data.tokens });
+        })
+        .catch(error => {
+          console.error('An error occurred while fetching tokens:', error);
+          res.status(500).send('Error fetching tokens');
+        });
     });
   } catch (error) {
     console.error('An error occurred while fetching user data:', error);
-    // Handle error or show error message to user
     res.status(500).send('Error fetching user data');
   }
 });
+
+
+app.get('/get-tokens-balance/:uid', async (req, res) => {
+  const uid = req.params.uid;
+  
+  try {
+    // Connect to the database
+    dbConnection.connect(async (err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        return res.status(500).json({ message: 'Database connection error' });
+      }
+
+      // Get the database instance
+      const db = dbConnection.get();
+      const user = await db.collection('users').findOne({ uid });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Send JSON response with tokens
+      res.status(200).json({ tokens: user.tokens });
+    });
+  } catch (error) {
+    console.error('An error occurred while fetching tokens balance:', error);
+    res.status(500).json({ message: 'Error fetching tokens balance' });
+  }
+});
+
 
 
 app.post('/purchase-tokens', async (req, res) => {
