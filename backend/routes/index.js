@@ -145,7 +145,7 @@ app.post('/register-user', async (req, res) => {
       // Update status in the "register-card" collection
       await db.collection('register-card').updateOne({ uid }, { $set: { status: true } });
 
-      res.status(201).send('User created and data stored successfully');
+      res.status(200).send('User created and data stored successfully');
     });
   } catch (error) {
     console.error('An error occurred while creating user and storing data:', error);
