@@ -58,7 +58,7 @@ function HomePage() {
     setConfirmedToken(0);
     setTotalSelectedTokens(0);
   };
-  const totalCost = confirmedToken * 15;
+  const totalCost = totalSelectedTokens * 15;
 
   // Fetch updated token balance every 1 second
   useEffect(() => {
@@ -95,23 +95,28 @@ function HomePage() {
             Email: <span>{userData.email}</span>
           </p>
           <p>
-            Card ID: <span>{updatedTokens==='null'? updatedTokens: userData.uid}</span>
+            Card ID: <span>{updatedTokens === 'null' ? updatedTokens : userData.uid}</span>
           </p>
           <div className="tokens-section">
             <p>
-              Tokens Balance:  {updatedTokens} 
+              Tokens Balance:  {updatedTokens}
             </p>
             <div className='flex'>
               <p>Total Cost: {totalCost}rs |||| Token selected:  <span>{totalSelectedTokens}</span></p>
             </div>
 
           </div>
-          <button className="reset-button" onClick={handleResetTokens}>
-            Reset Tokens
-          </button>
-          <button className="payment-button" onClick={handlePurchase} >
-            Purchase Tokens
-          </button>
+
+          {totalSelectedTokens > 0 && (
+            <>
+              <button className="reset-button" onClick={handleResetTokens}>
+                Reset Tokens
+              </button>
+              <button className="payment-button" onClick={handlePurchase}>
+                Purchase Tokens
+              </button>
+            </>
+          )}
 
         </div>
       </div>
