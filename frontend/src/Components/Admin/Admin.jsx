@@ -20,6 +20,30 @@ function Admin() {
       Navigate('/admin-login');
     }
   }, [Navigate]);
+
+  const fetchStudentsData = () => {
+    axios.get('http://localhost:4000/get-user-data-for-admin')
+      .then(response => {
+        setStudents(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  };
+
+  const deleteStudent = (uid) => {
+    const confirmation = window.confirm('Are you sure you want to delete this user?');
+    if (confirmation) {
+      axios.delete(`http://localhost:4000/delete-user/${uid}`)
+        .then(response => {
+          console.log(response.data);
+          fetchStudentsData(); // Fetch updated data after deletion
+        })
+        .catch(error => {
+          console.error('Error deleting user:', error);
+        });
+    }
+  };
   return (
     <div className="attendance-table-container">
       <table className="attendance-table">
@@ -29,7 +53,7 @@ function Admin() {
             <th className="table-header">Email</th>
             <th className="table-header">Token Balance</th>
             <th className="table-header">UID</th>
-            <th className="table-header">Time</th>
+            <th className="table-header">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -39,7 +63,7 @@ function Admin() {
               <td className="table-cell">{item.email}</td>
               <td className="table-cell">{item.tokens}</td>
               <td className="table-cell">{item.uid}</td>
-              <td className="table-cell">{item.time}</td>
+              <td className="table-cell"><button className='btn btn-danger' onClick={() => deleteStudent(item.uid)}>Delete</button></td>
             </tr>
           ))}
         </tbody>

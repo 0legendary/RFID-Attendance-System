@@ -286,5 +286,24 @@ app.get('/get-scanned-card-data', async (req, res) => {
 });
 
 
+app.delete('/delete-user/:uid', async (req, res) => {
+  const uid = req.params.uid;
+  const db = dbConnection.get();
+  try {
+    // Delete user from 'users' collection
+    await db.collection('users').deleteOne({ uid });
+
+    // Update status in 'register-card' collection
+    await db.collection('register-card').updateOne({ uid }, { $set: { status: false } });
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('An error occurred while deleting user:', error);
+    res.status(500).json({ message: 'Error deleting user' });
+  }
+});
+
+
+
 
 module.exports = app;
