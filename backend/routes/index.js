@@ -4,6 +4,13 @@ const app = express();
 app.use(bodyParser.json());
 const dbConnection = require('../config/connection')
 const bcrypt = require('bcrypt');
+const Razorpay = require('razorpay');
+
+const razorpay = new Razorpay({
+  key_id: 'rzp_test_2EAqZaiFy2rVs4',
+  key_secret: 'JjbsCUnMNvXifrijbNnKy4Na',
+});
+
 
 // Route to render your React component
 app.post('/check-admin-auth', (req, res) => {
@@ -265,6 +272,28 @@ app.post('/purchase-tokens', async (req, res) => {
     res.status(500).send('Error processing payment');
   }
 });
+
+app.post('/create-order', async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    const order = await razorpay.orders.create({
+      amount,
+      currency: 'INR',
+      receipt: 'receipt_order_1', // Generate a unique receipt for each order
+      payment_capture: 1, // Automatically capture payments
+    });
+
+    res.status(200).json({
+      id: order.id,
+      amount: order.amount,
+    });
+  } catch (error) {
+    console.error('Error creating Razorpay order:', error);
+    res.status(500).send('Error creating Razorpay order');
+  }
+});
+
 
 
 /* To show users in admin pannel */

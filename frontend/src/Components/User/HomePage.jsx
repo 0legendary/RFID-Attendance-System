@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Razorpay from 'react-razorpay';
 
 function HomePage() {
   const location = useLocation();
@@ -29,25 +30,66 @@ function HomePage() {
 
   const handlePurchase = async () => {
     try {
-      const response = await fetch('http://localhost:4000/purchase-tokens', {
+      const response = await fetch('http://localhost:4000/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          uid: userData.uid,
-          balance: totalSelectedTokens,
+          amount: totalCost * 100, // Razorpay expects amount in paise (multiply by 100)
         }),
       });
-
+  
       if (response.status === 200) {
-        const responseData = await response.json();
-        console.log('Tokens purchased successfully');
-
-        // Update the user's token balance in the state directly
-        setUpdatedTokens(responseData.updatedTokens);
+        const orderData = await response.json();
+  
+        // Open the Razorpay payment modal
+        const options = {
+          key: 'rzp_test_2EAqZaiFy2rVs4',
+          amount: orderData.amount,
+          order_id: orderData.id,
+          name: 'Token Purchase',
+          description: 'Purchase tokens',
+          handler: async function (response) {
+            // Payment success
+            console.log('Payment successful:', response);
+  
+            // Now you can update tokens in the database
+            try {
+              const purchaseResponse = await fetch('http://localhost:4000/purchase-tokens', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  uid: userData.uid,
+                  balance: totalSelectedTokens,
+                }),
+              });
+  
+              if (purchaseResponse.status === 200) {
+                const responseData = await purchaseResponse.json();
+                console.log('Tokens purchased successfully');
+  
+                // Update the user's token balance in the state directly
+                setUpdatedTokens(responseData.updatedTokens);
+              } else {
+                console.error('Error purchasing tokens');
+              }
+            } catch (error) {
+              console.error('An error occurred:', error);
+            }
+          },
+          prefill: {
+            email: userData.email,
+            contact: '9961689333',
+          },
+        };
+  
+        const rzp1 = new window.Razorpay(options);
+        rzp1.open();
       } else {
-        console.error('Error purchasing tokens');
+        console.error('Error creating Razorpay order');
       }
     } catch (error) {
       console.error('An error occurred:', error);
