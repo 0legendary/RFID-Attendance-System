@@ -12,6 +12,7 @@ const razorpay = new Razorpay({
 });
 
 
+
 // Route to render your React component
 app.post('/check-admin-auth', (req, res) => {
   const { email, password } = req.body;
@@ -61,13 +62,23 @@ app.post('/register-card', async (req, res) => {
 });
 
 
-/* this endpoint is in POST method, i changed into Get  */
+// Declare a global variable to store the decimalUID
+
+app.get('/original-uid', (req, res) => {
+  const scannedUID = req.query.uid; // Get the UID from the query parameter
+  console.log('Scanned UID (Hex):', scannedUID);
+  // Convert the hexadecimal UID to decimal format
+  decimalUID = parseInt(scannedUID, 16);
+  console.log(decimalUID);
+});
+
 app.post('/submit-code', (req, res) => {
-
-  const UID = 955345695;
-  //console.log('Sending code:', UID);
-
-  res.status(200).json({ uid: UID }); // Sending UID back to the frontend
+  const UID = decimalUID; // Use the shared variable in the POST request handler
+  console.log(UID + " Receive in '/submit-code");
+  res.status(200).json({ uid: UID });
+   // Sending UID back to the frontend
+  console.log(UID);
+  
 });
 
 

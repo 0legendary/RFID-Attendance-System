@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 function GenerateUID() {
   const [uid, setUid] = useState('');
   const navigate = useNavigate();
+  const [message, setMessage] = useState('')
 
 
   const generateCodeAndSendToBackend = async () => {
@@ -27,13 +28,15 @@ function GenerateUID() {
 
             if (userData.message === "One token Deducted") {
               console.log(userData.data + "One Token is deducted"); // userAcc object
-              // Logic for handling "One token Deducted" message
+              setMessage("One Token deducted")
+
             } else if (userData.message === "Insufficient Balance") {
               console.log(userData.data + "Insuffieciet Balance"); // userAcc object
-              // Logic for handling "Insufficient Balance" message
+              setMessage("Insuffieciet Balance")
+
             } else if (userData.message === "User Registered but not created Account") {
               console.log(userData.data+ "Registered, not created and account"); // userData object
-              // Logic for handling "User Registered but not created Account" message
+              setMessage("Registered, not created and account")
               
               localStorage.setItem("userData", JSON.stringify(userData.data));
 
@@ -42,7 +45,9 @@ function GenerateUID() {
 
             } else if (userData.message === "A new card is detected") {
               console.log(userData.data + "New UID detected"); // null
-              // Logic for handling "A new card is detected" message
+              setMessage("New UID detected")
+
+
               window.open(`/admin/new-card?uid=${data.uid}`);
             }
             
@@ -72,10 +77,13 @@ function GenerateUID() {
       });
         if (response.ok) {
           const data = await response.json();
-          if (data.uid !== uid) {
-            //console.log(data.uid, uid);
+          
+          if (data.uid !== uid && data.uid !==1 ) {
+            console.log(data.uid, uid);
             setUid(data.uid);
             generateCodeAndSendToBackend();
+          }else{
+            console.log("same UID Detected");
           }
         }
       } catch (error) {
@@ -96,8 +104,7 @@ function GenerateUID() {
   return (
     <div>
       <div>
-        <h1>5-Digit Code Generator</h1>
-        <p>Generated Code: {uid}</p>
+        <p>Status: {message}</p>
       </div>
     </div>
   );

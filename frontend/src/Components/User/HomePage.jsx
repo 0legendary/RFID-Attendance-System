@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Razorpay from 'react-razorpay';
+//import Razorpay from 'react-razorpay';
 
 function HomePage() {
   const location = useLocation();
