@@ -62,22 +62,28 @@ app.post('/register-card', async (req, res) => {
 });
 
 
-// Declare a global variable to store the decimalUID
+let decimalUID// Declare a global variable to store the decimalUID
 
 app.get('/original-uid', (req, res) => {
   const scannedUID = req.query.uid; // Get the UID from the query parameter
   console.log('Scanned UID (Hex):', scannedUID);
   // Convert the hexadecimal UID to decimal format
   decimalUID = parseInt(scannedUID, 16);
-  console.log(decimalUID);
+  //console.log(decimalUID);
 });
 
 app.post('/submit-code', (req, res) => {
-  const UID = decimalUID; // Use the shared variable in the POST request handler
-  console.log(UID + " Receive in '/submit-code");
-  res.status(200).json({ uid: UID });
-   // Sending UID back to the frontend
-  console.log(UID);
+  //const UID = decimalUID; // Use the shared variable in the POST request handler
+  if(decimalUID!==null){
+    UID = decimalUID
+  }else{
+    UID = newuid
+  }
+  //console.log(UID + " Receive in '/submit-code");
+  res.status(200).json({ uid: UID }); // Sending UID back to the frontend
+  newuid=decimalUID
+  decimalUID=null
+  //console.log(UID);
   
 });
 
