@@ -29,11 +29,12 @@ function GenerateUID() {
             if (userData.message === "One token Deducted") {
               console.log(userData.data + "One Token is deducted"); // userAcc object
               setMessage("One Token deducted")
+              
 
             } else if (userData.message === "Insufficient Balance") {
               console.log(userData.data + "Insuffieciet Balance"); // userAcc object
               setMessage("Insuffieciet Balance")
-
+                
             } else if (userData.message === "User Registered but not created Account") {
               console.log(userData.data+ "Registered, not created and account"); // userData object
               setMessage("Registered, not created and account")

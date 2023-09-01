@@ -69,7 +69,8 @@ app.get('/original-uid', (req, res) => {
   console.log('Scanned UID (Hex):', scannedUID);
   // Convert the hexadecimal UID to decimal format
   decimalUID = parseInt(scannedUID, 16);
-  //console.log(decimalUID);
+  
+  console.log(decimalUID);
 });
 
 app.post('/submit-code', (req, res) => {
@@ -111,11 +112,36 @@ app.get('/get-user-data', async (req, res) => {
         if (userAcc.tokens > 0) {
           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
           console.log("User is Existing, one token Diducted");
-          res.status(200).json({ message: "One token Deducted", data: userAcc });
+          fetch(`http://localhost:4000/update-status?status=true`) // Change the URL if needed
+          .then(response => {
+            if (response.ok) {
+              console.log('Update status to true successful');
+            } else {
+              console.log('Update status to true failed');
+            }
+          })
+          .catch(error => {
+            console.error('Error updating status to true:', error);
+          });
+
+        res.status(200).json({ message: "One token Deducted", data: userAcc, status: true });
+          
         } else {
           console.log("Insufficiet Balance");
-          res.status(200).json({ message: "Insufficient Balance", data: userAcc });
+          fetch(`http://localhost:4000/update-status?status=false`) // Change the URL if needed
+          .then(response => {
+            if (response.ok) {
+              console.log('Update status to false successful');
+            } else {
+              console.log('Update status to false failed');
+            }
+          })
+          .catch(error => {
+            console.error('Error updating status to false:', error);
+          });
 
+        res.status(200).json({ message: "Insufficient Balance", data: userAcc, status: false });
+      
         }
 
       } else {
@@ -140,6 +166,50 @@ app.get('/get-user-data', async (req, res) => {
     res.status(500).json({ message: "Error fetching user data", data: null });
   }
 });
+
+app.get('/update-status', (req, res) => {
+  const status = req.query.status; 
+  
+  console.log('Received status:' , status);
+
+  // Perform actions based on the status value (if needed)
+  if (status === 'true') {
+    console.log("true");
+    res.status(200).json({condition:true});
+    
+  } else if (status === 'false') {
+    console.log("false");
+    res.status(200).json({ condition:false });
+  } else {
+    console.log('Invalid status received');
+    
+  }
+  
+});
+
+app.post('/update-status', (req, res) => {
+  const status = req.query.status; 
+  
+  console.log('Received status:' , status);
+
+  // Perform actions based on the status value (if needed)
+  if (status === 'true') {
+    console.log("true");
+    res.status(200).json({condition:true});
+    
+  } else if (status === 'false') {
+    console.log("false");
+    res.status(200).json({ condition:false });
+  } else {
+    console.log('Invalid status received');
+    
+  }
+  
+});
+
+
+
+
 
 
 app.post('/register-user', async (req, res) => {
