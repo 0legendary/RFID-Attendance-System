@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-  
+
 function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,13 +20,10 @@ function AdminLogin() {
       });
 
       if (response.ok) {
-        Navigate('/admin'); // Redirect to admin page
+        // Store the timestamp when admin logged in
+        localStorage.setItem('adminLoginTime', Date.now());
 
-        // Store login as cookies for 5 minutes
-        const now = new Date();
-        const expirationDate = new Date(now.getTime() + 5 * 1000);
-        console.log(expirationDate);
-        document.cookie = `adminLoggedIn=true; expires=${expirationDate.toUTCString()}`;
+        Navigate('/admin'); // Redirect to admin page
       } else {
         setErrorMessage('Incorrect email or password');
       }
@@ -61,7 +58,7 @@ function AdminLogin() {
                 required
               />
             </div>
-            
+
             <button type="submit" className="admin-btn-login">
               Login
             </button>
@@ -69,7 +66,7 @@ function AdminLogin() {
           </form>
         </div>
       </div>
-      
+
     </div>
   );
 }

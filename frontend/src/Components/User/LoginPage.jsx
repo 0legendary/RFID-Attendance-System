@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 
 
@@ -8,6 +8,7 @@ function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState("");
+  
 
 
   const handleLogin = async (e) => {
@@ -25,7 +26,10 @@ function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         if (data) {
+         
+
           navigate('/home', { state: { data } });
+          console.log(data);
         }
 
         alert(data.message); // Display success message as a browser alert

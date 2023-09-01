@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 function UIDCreationForm() {
   const [identifier, setIdentifier] = useState('');
   const [uidFromQuery, setUidFromQuery] = useState('');
+  const [submissionStatus, setSubmissionStatus] = useState(null);
 
   const location = useLocation();
 
@@ -25,16 +26,20 @@ function UIDCreationForm() {
         body: JSON.stringify({
           uid: uidFromQuery,
           identifier,
-          status:false,
+          status: false,
         }),
       });
 
       if (response.ok) {
         console.log('User created successfully');
+        window.alert('User created successfully'); // Display success message
         // Perform any further actions or show success message to the user
+        setSubmissionStatus('true');
       } else {
         console.error('Failed to create user');
+        window.alert('Failed to create user'); // Display failure message
         // Handle error or show an error message to the user
+        setSubmissionStatus('false');
       }
     } catch (error) {
       console.error('An error occurred while creating the user:', error);
@@ -44,26 +49,37 @@ function UIDCreationForm() {
 
   return (
     <div>
-      <div className="uid-creation-form">
-        <h2>Create UID1</h2>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="uid">UID: </label>
-          <input type="text" id="uid" value={uidFromQuery || ''} readOnly />
-
-          {/* Rest of the form */}
-          <label htmlFor="identifier">Identifier</label>
-          <input
-            type="text"
-            id="identifier"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            required
-          />
-
-          <button type="submit">Create</button>
-        </form>
+    {submissionStatus === 'true' ? (
+      <div className="submission-success">
+        <h1>User created Successfully</h1>
       </div>
+    ) : submissionStatus === 'false' ? (
+      <div className="submission-error">
+        Failed to create user. Please try again.
+      </div>
+    ) : (
+      <div className="uid-creation-form">
+      <h2>Create UID1</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="uid">UID: </label>
+        <input type="text" id="uid" value={uidFromQuery || ''} readOnly />
+
+        {/* Rest of the form */}
+        <label htmlFor="identifier">Identifier</label>
+        <input
+          type="text"
+          id="identifier"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
+          required
+        />
+
+        <button type="submit">Create</button>
+      </form>
     </div>
+    )}
+    
+  </div>
   );
 }
 

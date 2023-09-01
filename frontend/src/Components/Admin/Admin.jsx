@@ -4,11 +4,10 @@ import axios from 'axios';
 
 function Admin() {
   const [students, setStudents] = useState([]);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
   const Navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:4000/get-user-data-for-admin') // Use the correct route
+    axios.get('http://localhost:4000/get-user-data-for-admin')
       .then(response => {
         setStudents(response.data);
       })
@@ -16,20 +15,36 @@ function Admin() {
         console.error('Error fetching user data:', error);
       });
 
-    // Check for the adminLoggedIn cookie and its expiration
-    const adminLoggedIn = document.cookie.includes('adminLoggedIn=true');
-    const cookies = document.cookie.split(';');
-    const expirationCookie = cookies.find(cookie => cookie.trim().startsWith('adminLoggedIn='));
-
-    if (!adminLoggedIn || (expirationCookie && new Date(expirationCookie.split('=')[1]) < new Date())) {
-      setShouldRedirect(true);
+    const adminLoginTime = localStorage.getItem('adminLoginTime');
+    if (!adminLoginTime || Date.now() - adminLoginTime > 3600000) { // More than 1 hour
+      Navigate('/admin-login');
     }
-  }, []);
+  }, [Navigate]);
 
-  if (shouldRedirect) {
-    Navigate('/admin-login');
-    return null;
-  }
+  const fetchStudentsData = () => {
+    axios.get('http://localhost:4000/get-user-data-for-admin')
+      .then(response => {
+        setStudents(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  };
+
+  const deleteStudent = (uid) => {
+    const confirmation = window.confirm('Are you sure you want to delete this user?');
+    if (confirmation) {
+      axios.delete(`http://localhost:4000/delete-user/${uid}`)
+        .then(response => {
+          
+          //console.log(response.data);
+          fetchStudentsData(); // Fetch updated data after deletion
+        })
+        .catch(error => {
+          console.error('Error deleting user:', error);
+        });
+    }
+  };
   return (
     <div className="attendance-table-container">
       <table className="attendance-table">
@@ -39,7 +54,7 @@ function Admin() {
             <th className="table-header">Email</th>
             <th className="table-header">Token Balance</th>
             <th className="table-header">UID</th>
-            <th className="table-header">Time</th>
+            <th className="table-header">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -49,7 +64,7 @@ function Admin() {
               <td className="table-cell">{item.email}</td>
               <td className="table-cell">{item.tokens}</td>
               <td className="table-cell">{item.uid}</td>
-              <td className="table-cell">{item.time}</td>
+              <td className="table-cell"><button className='btn btn-danger' onClick={() => deleteStudent(item.uid)}>Delete</button></td>
             </tr>
           ))}
         </tbody>
