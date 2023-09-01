@@ -91,7 +91,7 @@ app.post('/submit-code', (req, res) => {
 
 app.get('/get-user-data', async (req, res) => {
   const uid = req.query.uid;
-  //console.log(uid);
+  console.log(uid);
 
   try {
     // Connect to the database using your custom connection setup
@@ -112,47 +112,29 @@ app.get('/get-user-data', async (req, res) => {
         if (userAcc.tokens > 0) {
           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
           console.log("User is Existing, one token Diducted");
-          fetch(`http://localhost:4000/update-status?status=true`) // Change the URL if needed
-          .then(response => {
-            if (response.ok) {
-              console.log('Update status to true successful');
-            } else {
-              console.log('Update status to true failed');
-            }
-          })
-          .catch(error => {
-            console.error('Error updating status to true:', error);
-          });
-
+          
+          console.log('true');
         res.status(200).json({ message: "One token Deducted", data: userAcc, status: true });
           
         } else {
           console.log("Insufficiet Balance");
-          fetch(`http://localhost:4000/update-status?status=false`) // Change the URL if needed
-          .then(response => {
-            if (response.ok) {
-              console.log('Update status to false successful');
-            } else {
-              console.log('Update status to false failed');
-            }
-          })
-          .catch(error => {
-            console.error('Error updating status to false:', error);
-          });
-
+          
+          console.log('false');
         res.status(200).json({ message: "Insufficient Balance", data: userAcc, status: false });
       
         }
 
       } else {
+
+
         const userData = await db.collection('register-card').findOne({ uid });
         if (userData) {
           console.log("User Registered his card but not created his Account");
-          res.status(200).json({ message: "User Registered but not created Account", data: userData });
+          res.status(200).json({ message: "User Registered but not created Account", data: userData, status: false });
           //console.log(userData);
         } else {
           console.log("A new card is detected");
-          res.status(200).json({ message: "A new card is detected", data: null });
+          res.status(200).json({ message: "A new card is detected", data: null, status: false });
         }
 
       }
@@ -167,25 +149,24 @@ app.get('/get-user-data', async (req, res) => {
   }
 });
 
-app.get('/update-status', (req, res) => {
-  const status = req.query.status; 
+// app.get('/update-status', (req, res) => {
+//   const status = req.query.status; 
   
-  console.log('Received status:' , status);
+//   console.log('Received status:' , status);
 
-  // Perform actions based on the status value (if needed)
-  if (status === 'true') {
-    console.log("true");
-    res.status(200).json({condition:true});
+//   // Perform actions based on the status value (if needed)
+//   if (status === 'true') {
+//     console.log("true");
+//     res.status(200).json({condition:true});
     
-  } else if (status === 'false') {
-    console.log("false");
-    res.status(200).json({ condition:false });
-  } else {
-    console.log('Invalid status received');
+//   } else if (status === 'false') {
+//     console.log("false");
+//     res.status(200).json({ condition:false });
+//   } else {
+//     console.log('Invalid status received');
     
-  }
-  
-});
+//   }
+// });
 
 app.post('/update-status', (req, res) => {
   const status = req.query.status; 

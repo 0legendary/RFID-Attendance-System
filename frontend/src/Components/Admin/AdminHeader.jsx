@@ -23,7 +23,7 @@ function AdminHeader() {
         </div>
         
         <div className='admin-header'>
-          <Link to=""><button className='admin-card mr-5'>Register Manually</button></Link>
+          {/* <Link to=""><button className='admin-card mr-5'>Register Manually</button></Link> */}
           <Link to="/"><button className='admin-card'>User Login</button></Link>
           <Link to="/admin/rfid-scanned-cards"><button className='admin-card'>Cards</button></Link>
           <Link to="/admin"><button className='admin-card'>Users</button></Link>
