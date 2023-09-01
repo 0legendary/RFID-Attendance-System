@@ -5,6 +5,8 @@ app.use(bodyParser.json());
 const dbConnection = require('../config/connection')
 const bcrypt = require('bcrypt');
 const Razorpay = require('razorpay');
+const axios = require('axios')
+
 
 const razorpay = new Razorpay({
   key_id: 'rzp_test_2EAqZaiFy2rVs4',
@@ -63,14 +65,21 @@ app.post('/register-card', async (req, res) => {
 
 
 let decimalUID// Declare a global variable to store the decimalUID
+let status =0
 
 app.get('/original-uid', (req, res) => {
   const scannedUID = req.query.uid; // Get the UID from the query parameter
+  
+
   console.log('Scanned UID (Hex):', scannedUID);
   // Convert the hexadecimal UID to decimal format
   decimalUID = parseInt(scannedUID, 16);
   
   console.log(decimalUID);
+  setTimeout(() => {
+    res.send(status.toString());
+  }, 1500); 
+
 });
 
 app.post('/submit-code', (req, res) => {
@@ -100,11 +109,8 @@ app.get('/get-user-data', async (req, res) => {
         console.error('Error connecting to the database:', err);
         return res.status(500).send('Database connection error');
       }
-
       // Get the database instance
       const db = dbConnection.get();
-
-
       // Access the "register-card" collection and find the user data based on UID
       const userAcc = await db.collection('users').findOne({ uid });
 
@@ -112,15 +118,13 @@ app.get('/get-user-data', async (req, res) => {
         if (userAcc.tokens > 0) {
           await db.collection('users').updateOne({ uid }, { $inc: { tokens: -1 } });
           console.log("User is Existing, one token Diducted");
-          
-          console.log('true');
-        res.status(200).json({ message: "One token Deducted", data: userAcc, status: true });
-          
+          status=1
+          res.status(200).json({ message: "One token Deducted", data: userAcc});
+        
         } else {
           console.log("Insufficiet Balance");
-          
-          console.log('false');
-        res.status(200).json({ message: "Insufficient Balance", data: userAcc, status: false });
+          status=0
+        res.status(200).json({ message: "Insufficient Balance", data: userAcc});
       
         }
 
@@ -130,11 +134,13 @@ app.get('/get-user-data', async (req, res) => {
         const userData = await db.collection('register-card').findOne({ uid });
         if (userData) {
           console.log("User Registered his card but not created his Account");
-          res.status(200).json({ message: "User Registered but not created Account", data: userData, status: false });
+          status=0
+          res.status(200).json({ message: "User Registered but not created Account", data: userData});
           //console.log(userData);
         } else {
           console.log("A new card is detected");
-          res.status(200).json({ message: "A new card is detected", data: null, status: false });
+          status=0
+          res.status(200).json({ message: "A new card is detected", data: null});
         }
 
       }
@@ -149,44 +155,7 @@ app.get('/get-user-data', async (req, res) => {
   }
 });
 
-// app.get('/update-status', (req, res) => {
-//   const status = req.query.status; 
-  
-//   console.log('Received status:' , status);
 
-//   // Perform actions based on the status value (if needed)
-//   if (status === 'true') {
-//     console.log("true");
-//     res.status(200).json({condition:true});
-    
-//   } else if (status === 'false') {
-//     console.log("false");
-//     res.status(200).json({ condition:false });
-//   } else {
-//     console.log('Invalid status received');
-    
-//   }
-// });
-
-app.post('/update-status', (req, res) => {
-  const status = req.query.status; 
-  
-  console.log('Received status:' , status);
-
-  // Perform actions based on the status value (if needed)
-  if (status === 'true') {
-    console.log("true");
-    res.status(200).json({condition:true});
-    
-  } else if (status === 'false') {
-    console.log("false");
-    res.status(200).json({ condition:false });
-  } else {
-    console.log('Invalid status received');
-    
-  }
-  
-});
 
 
 
